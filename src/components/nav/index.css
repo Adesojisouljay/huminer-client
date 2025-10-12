@@ -1,0 +1,57 @@
+/* :root {
+  --gold: #FFD700;
+  --blue: #1E3A8A;
+} */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--blue);
+  color: var(--gold);
+  padding: 10px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-logo {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--gold);
+}
+
+.navbar-links {
+  display: flex;
+  gap: 20px;
+}
+
+.navbar-link {
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.navbar-link:hover {
+  text-decoration: underline;
+  color: #ffeb7a; /* lighter gold for hover */
+}
+
+.navbar-balance {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #162f6e; /* darker blue */
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--gold);
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gold);
+}

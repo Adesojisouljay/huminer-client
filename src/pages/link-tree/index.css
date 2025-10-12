@@ -1,0 +1,59 @@
+.linktree-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 2rem;
+    text-align: center;
+    font-family: Arial, sans-serif;
+  }
+  
+  .linktree-title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    /* color: #222; */
+  }
+  
+  .song-card {
+    /* background: #f9f9f9; */
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0px 3px 6px rgba(0,0,0,0.1);
+  }
+  
+  .song-card h2 {
+    margin-bottom: 0.5rem;
+  }
+  
+  .embed-container {
+    margin-bottom: 1rem;
+  }
+  
+  .links, .social-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .link-button, .social-button {
+    background: #222;
+    color: white;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+  }
+  
+  .link-button:hover, .social-button:hover {
+    background: #555;
+  }
+  
+  .socials-section {
+    margin-top: 2rem;
+  }
+  
+  .socials-section h2 {
+    margin-bottom: 1rem;
+  }
+  

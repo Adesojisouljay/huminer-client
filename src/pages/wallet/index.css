@@ -1,0 +1,113 @@
+.wallet-page {
+    padding: 20px;
+    max-width: 700px;
+    margin: auto;
+  }
+  
+  .wallet-balance {
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  
+  .balance-amount {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  .wallet-actions {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  
+  .wallet-actions button {
+    flex: 1;
+    padding: 10px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .wallet-actions button:hover {
+    background: #1e40af;
+  }
+  
+  .bank-accounts, .transaction-history {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  
+  .transaction-history table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .transaction-history th,
+  .transaction-history td {
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+  }
+  
+  /* Existing wallet styles here... */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .wallet-modal {
+    padding: 20px;
+    border-radius: 10px;
+    width: 350px;
+    max-width: 90%;
+  }
+  
+  .modal h3 {
+    margin-bottom: 15px;
+  }
+  
+  .modal input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .modal-actions button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .modal-actions .cancel {
+    background: #ef4444;
+    color: white;
+  }
+  
+  .modal-actions button:not(.cancel) {
+    background: #2563eb;
+    color: white;
+  }
+  
