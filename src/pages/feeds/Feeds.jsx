@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AiOutlineLike, AiOutlineDislike, AiOutlineMessage } from "react-icons/ai";
 import { TbMoneybag } from "react-icons/tb";
 import TipPopup from "../../components/tip-popup/TipPopup";
 import StoryViewer from "../../components/stories/Stories";
+import { getAllPosts } from "../../api/postApi";
 import "./index.css";
 
 export default function FeedPage() {
@@ -15,6 +16,7 @@ export default function FeedPage() {
 
   // Filter control
   const [filterType, setFilterType] = useState("latest");
+  const [allPosts, setAllPosts] = useState([])
 
   const [posts, setPosts] = useState([
     {
@@ -96,6 +98,20 @@ export default function FeedPage() {
   const artists = ["Soji", "Mike"];   // mock artist list
   const challengeKeywords = ["challenge", "freestyle"]; // keywords for challenge posts
 
+  useEffect(() => {
+    getPosts()
+  },[])
+
+  const getPosts = async () => {
+    try {
+      const result = await getAllPosts();
+      console.log(result)
+      setAllPosts(result?.posts)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const getFilteredPosts = () => {
     if (filterType === "following") {
       return posts.filter(p => following.includes(p.author));
@@ -134,7 +150,7 @@ export default function FeedPage() {
 
   return (
     <div className="feed-page">
-      <h1>🎵 Feed</h1>
+      {/* <h1>🎵 Feed</h1> */}
 
       {/* Filter buttons */}
       <div className="filter-bar">
@@ -165,32 +181,33 @@ export default function FeedPage() {
           />
         )}
       </div>
-
+          {/* <p>hhdhdh{allPosts?.length}</p> */}
       <div className="feed-list">
-        {getFilteredPosts().map((post) => (
-          <div className="feed-card" key={post.id}>
-            <img src={post.image} alt={post.title} className="feed-image" />
+        {allPosts?.map((post) => (
+          <div className="feed-card" key={post?._id}>
+            <img src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG1RjPbiW0rp7uKIasNl4SdZuCiQpQFQDejQ&s"} alt={post?.title} className="feed-image" />
             <div className="feed-content">
-              <Link className="feed-title" to={`/post/${post.id}`}><h2>{post.title}</h2></Link>
-              <p className="feed-author">By {post.author}</p>
+              <Link className="feed-title" to={`/post/${post?._id}`}><h2>{post?.title}</h2></Link>
+              <p className="feed-author">By {post?.author}</p>
               <p className="feed-snippet">
-                {post.content.length > 80 ? post.content.substring(0, 80) + "..." : post.content}
+                {post?.body?.length > 80 ? post?.body?.substring(0, 80) + "..." : post?.body}
               </p>
 
               <div className="feed-stats-action">
                 <div className="feed-actions">
-                  <AiOutlineLike onClick={() => setSelectedPost(post.id)} className="icon" title="Tip / Like" />
-                  <span className="likes" title={`Liked by: ${post.likedBy.join(", ")}`}>{post.likes}</span>
+                  <span>{post.tips?.length}</span>
+                  <AiOutlineLike onClick={() => setSelectedPost(post?._id)} className="icon" title="Tip / Like" />
+                  <span className="likes" title={`Liked by: ${post?.likedBy?.join(", ")}`}>{post?.likes}</span>
                   <AiOutlineDislike className="icon" />
                   <AiOutlineMessage className="icon" />
-                  <span>{post.comments}</span>
+                  <span>{post?.comments?.length}</span>
                 </div>
 
                 <div className="feed-stats">
                   <span>Post reward:</span>
                   <div>
                     <TbMoneybag className="icon" />
-                    <span>₦{post.tippedAmount}</span>
+                    <span>₦{post?.totalTips}</span>
                   </div>
                 </div>
               </div>

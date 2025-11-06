@@ -1,0 +1,83 @@
+.song-container {
+    background-color: #111827;
+    color: #fff;
+    width: 80%;
+    margin: 50px auto;
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .song-cover {
+    width: 180px;
+    height: 180px;
+    border-radius: 12px;
+    object-fit: cover;
+    margin-bottom: 16px;
+  }
+  
+  .song-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  
+  .song-artist {
+    color: #9ca3af;
+    margin-bottom: 24px;
+    font-size: 0.9rem;
+  }
+  
+  .song-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .song-link {
+    /* background: #2563eb; */
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .song-link:hover {
+    background: #1d4ed8;
+  }
+  
+  .song-footer {
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: #9ca3af;
+  }
+  
+  .toggle-section {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .toggle-btn {
+    background: #374151;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+  
+  .toggle-btn.active {
+    background: #2563eb;
+  }
+  
+  .toggle-btn:hover {
+    background: #1d4ed8;
+  }
+  

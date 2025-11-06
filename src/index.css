@@ -44,3 +44,11 @@ code {
   backdrop-filter: var(--modal-blur);
   border: var(--modal-border);
 }
+
+.danger-btn{
+  background-color: rgb(228, 85, 85);
+  }
+  
+  .danger-btn:hover{
+      background-color: rgb(135, 98, 98);
+  }

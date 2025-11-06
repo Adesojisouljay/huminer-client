@@ -1,39 +1,62 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { registerUserThunk } from "../../redux/userSlice"; // adjust path if needed
 import "./index.css";
 
 export default function SignupPage() {
-  const [name, setName] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { loading, error, activeUser } = useSelector((state) => state.huminer);
+
   const handleSignup = (e) => {
     e.preventDefault();
-    if (!name || !email || !password || !confirmPassword) {
-      alert("Please fill in all fields.");
-      return;
-    }
+
     if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+      alert("Passwords do not match!");
       return;
     }
-    console.log("Signing up with:", { name, email, password });
-    alert("Signup successful (mock)!");
-    // Later: call backend API to create account
+
+    const userData = { fullName, username, email, password };
+    dispatch(registerUserThunk(userData));
   };
+
+  // Redirect to login after successful registration
+  useEffect(() => {
+    if (!loading && activeUser) {
+      alert("Registration successful! Please log in.");
+      navigate("/login");
+    }
+  }, [loading, activeUser, navigate]);
 
   return (
     <div className="signup-page">
       <div className="signup-box">
         <h1>🎵 SOULJAY</h1>
-        <p className="signup-subtitle">Join the community where everyone is a celebrity</p>
+        <p className="signup-subtitle">
+          Join the community where everyone is a celebrity
+        </p>
 
         <form onSubmit={handleSignup}>
           <input
             type="text"
             placeholder="Full name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+          />
+
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
 
           <input
@@ -57,8 +80,12 @@ export default function SignupPage() {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
 
-          <button type="submit">Sign Up</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Creating account..." : "Sign Up"}
+          </button>
         </form>
+
+        {error && <p className="error-message">{error}</p>}
 
         <div className="signup-links">
           <span>Already have an account?</span>

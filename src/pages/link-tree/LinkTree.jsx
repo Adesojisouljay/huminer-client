@@ -1,67 +1,106 @@
-import React from "react";
-import songs from "./songs";
-import socials from "./socials";
+import React, { useState } from "react";
+import { getSongLinks } from "../../api/songLinks";
 import "./index.css";
 
-export default function LinkTree() {
+// Define platform icons
+const platformIcons = {
+  spotify: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/spotify.svg",
+  appleMusic: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/applemusic.svg",
+  itunes: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/itunes.svg",
+  youtube: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtube.svg",
+  youtubeMusic: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtubemusic.svg",
+  deezer: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/deezer.svg",
+  tidal: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tidal.svg",
+  pandora: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/pandora.svg",
+  amazonMusic: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/amazonmusic.svg",
+  yandex: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQoh4roEWnk1zTeeS-z4_qaK242s5spnrOm_Q&s",
+  amazonStore: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/amazon.svg",
+};
+
+const SongLinks = () => {
+  const [songUrl, setSongUrl] = useState("");
+  const [songData, setSongData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSongData(null);
+    setLoading(true);
+
+    try {
+      const data = await getSongLinks(songUrl);
+      console.log(data)
+      setSongData(data);
+    } catch {
+      setError("Failed to fetch song links. Please check your URL.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="linktree-container">
-      <h1 className="linktree-title">🎶 My Music Linktree 🎶</h1>
+    <div className="song-links-container">
+      <h2>🎵 Generate Your Song LinkTree</h2>
 
-      {/* Songs Section */}
-      <div className="songs-section">
-        {songs.map((song, idx) => (
-          <div key={idx} className="card">
-            <h2>{song.title}</h2>
+      <form onSubmit={handleSubmit} className="song-form">
+        <input
+          type="text"
+          placeholder="Paste your Spotify, Apple Music or YouTube link..."
+          value={songUrl}
+          onChange={(e) => setSongUrl(e.target.value)}
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? "Generating..." : "Generate"}
+        </button>
+      </form>
 
-            {/* Embedded player */}
-            <div className="embed-container">
-              <iframe
-                src={song.embed}
-                width="100%"
-                height="80"
-                frameBorder="0"
-                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
-                allowFullScreen
-                title={song.title}
-              ></iframe>
-            </div>
+      {error && <p className="error">{error}</p>}
 
-            {/* Links */}
-            <div className="links">
-              {Object.entries(song.links).map(([platform, url]) => (
+      {songData && (
+        <div className="song-result">
+          {songData.entitiesByUniqueId && (() => {
+            const entity = songData.entitiesByUniqueId[songData.entityUniqueId];
+            return (
+              <div className="song-info">
+                <img src={entity.thumbnailUrl} alt={entity.title} />
+                <h3>{entity.title}</h3>
+                <p>{entity.artistName}</p>
+              </div>
+            );
+          })()}
+
+          <div className="platform-links">
+            {Object.entries(songData.linksByPlatform).map(([platform, details]) => {
+              const icon = platformIcons[platform];
+              return (
                 <a
                   key={platform}
-                  href={url}
+                  href={details.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="link-button"
+                  className="platform-btn"
                 >
-                  {platform}
+                  {icon && <img src={icon} alt={platform} className="platform-icon" />}
+                  <span>{platform.charAt(0).toUpperCase() + platform.slice(1)}</span>
                 </a>
-              ))}
-            </div>
+              );
+            })}
           </div>
-        ))}
-      </div>
+          <iframe
+              src="https://open.spotify.com/embed/track/1Wi25NXSrfhpcERiliwuyx"
+              width="100%"
+              height="152"
+              frameBorder="0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy">
+            </iframe>
 
-      {/* Social Media */}
-      <div className="socials-section">
-        <h2>🌍 Connect with me</h2>
-        <div className="social-links">
-          {Object.entries(socials).map(([platform, url]) => (
-            <a
-              key={platform}
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="social-button"
-            >
-              {platform}
-            </a>
-          ))}
         </div>
-      </div>
+      )}
     </div>
   );
-}
+};
+
+export default SongLinks;

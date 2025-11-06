@@ -1,7 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Link, useNavigate,  } from "react-router-dom";
 import "./index.css";
 
 export default function LandingPage() {
+
+  const navigate = useNavigate()
+
+  const {isAuthenticated, activeUser} = useSelector((state) => state.huminer);
+  
+  useEffect(() => {
+    if (isAuthenticated && activeUser) {
+      navigate("/feed"); // redirect to homepage or dashboard
+    }
+  },[])
+
   return (
     <div className="landing">
 
@@ -9,7 +22,9 @@ export default function LandingPage() {
       <section className="hero">
         <h1>🎵 Share Your Music. Engage Your Fans. Get Tipped.</h1>
         <p>Join a vibrant community where artists and fans connect directly through music and tips.</p>
-        <button className="cta-btn">Join Now</button>
+        <Link to="/signup">
+          <button className="cta-btn">Join Now</button>
+        </Link>
       </section>
 
       <section className="celebrity-banner">
@@ -74,12 +89,16 @@ export default function LandingPage() {
           <div className="challenge-card">
             <h3>Best Freestyle Contest</h3>
             <p>Show your freestyle skills and win ₦10,000.</p>
-            <button className="cta-btn">Join Now</button>
+            <Link to="/signup">
+              <button className="cta-btn">Join Now</button>
+            </Link>
           </div>
           <div className="challenge-card">
             <h3>Cover Song Challenge</h3>
             <p>Perform your favorite hit and earn fan tips.</p>
-            <button className="cta-btn">Join Now</button>
+            <Link to="/signup">
+              <button className="cta-btn">Join Now</button>
+            </Link>
           </div>
         </div>
       </section>
@@ -102,7 +121,9 @@ export default function LandingPage() {
       {/* CTA Banner */}
       <section className="cta-banner">
         <h2>Start sharing your music today</h2>
-        <button className="cta-btn">Get Started</button>
+        <Link to="/login">
+          <button className="cta-btn">Get Started</button>
+        </Link>
       </section>
 
       {/* Footer */}

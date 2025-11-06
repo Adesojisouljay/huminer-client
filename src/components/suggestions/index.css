@@ -1,0 +1,125 @@
+.suggestions {
+    width: 270px;
+    padding: 20px;
+    border-left: 1px solid #2c2c2c;
+    background-color: #0b1120;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .suggestions h3 {
+    font-size: 1rem;
+    color: #ffd700;
+    margin-bottom: 10px;
+  }
+  
+  .suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  
+  .suggestion-item img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+  
+  .suggestion-name {
+    font-weight: 600;
+  }
+  
+  .suggestion-handle {
+    color: #aaa;
+    font-size: 0.85rem;
+  }
+  
+  .follow-btn {
+    background-color: #1e3a8a;
+    color: #ffd700;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.2s;
+  }
+  
+  .follow-btn:hover {
+    background-color: #294eb5;
+  }
+
+  /* --- Suggested Content Section --- */
+.suggested-content {
+    margin-top: 20px;
+  }
+  
+  .suggested-content h3 {
+    font-size: 1rem;
+    color: #ffd700;
+    margin-bottom: 10px;
+  }
+  
+  .content-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .content-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 8px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: white;
+    transition: background 0.2s ease;
+  }
+  
+  .content-card:hover {
+    background: rgba(255, 215, 0, 0.1);
+  }
+  
+  .content-card img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+  
+  .content-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  
+  .content-title {
+    font-weight: 500;
+    font-size: 0.9rem;
+    line-height: 1.1rem;
+  }
+  
+  .content-author {
+    font-size: 0.8rem;
+    color: #aaa;
+  }
+  
+  
+  .suggestion-footer {
+    font-size: 0.8rem;
+    color: #888;
+    text-align: center;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 1px solid #222;
+  }
+  

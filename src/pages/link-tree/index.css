@@ -1,59 +1,95 @@
-.linktree-container {
-    max-width: 600px;
-    margin: auto;
-    padding: 2rem;
-    text-align: center;
-    font-family: Arial, sans-serif;
-  }
-  
-  .linktree-title {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-    /* color: #222; */
-  }
-  
-  .song-card {
-    /* background: #f9f9f9; */
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0px 3px 6px rgba(0,0,0,0.1);
-  }
-  
-  .song-card h2 {
-    margin-bottom: 0.5rem;
-  }
-  
-  .embed-container {
-    margin-bottom: 1rem;
-  }
-  
-  .links, .social-links {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-  
-  .link-button, .social-button {
-    background: #222;
-    color: white;
-    padding: 0.6rem 1rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: background 0.2s;
-  }
-  
-  .link-button:hover, .social-button:hover {
-    background: #555;
-  }
-  
-  .socials-section {
-    margin-top: 2rem;
-  }
-  
-  .socials-section h2 {
-    margin-bottom: 1rem;
-  }
-  
+.song-links-container {
+  max-width: 600px;
+  margin: 50px auto;
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+}
+
+.song-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.song-form input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.song-form button {
+  padding: 12px 20px;
+  border: none;
+  background-color: #1db954;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.song-form button:hover {
+  background-color: #169e46;
+}
+
+.error {
+  color: red;
+  margin-bottom: 20px;
+}
+
+.song-result {
+  margin-top: 30px;
+}
+
+.song-info img {
+  width: 200px;
+  height: 200px;
+  border-radius: 12px;
+  object-fit: cover;
+  margin-bottom: 15px;
+}
+
+.song-info h3 {
+  margin: 10px 0 5px;
+  font-size: 22px;
+}
+
+.song-info p {
+  font-size: 16px;
+}
+
+.platform-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.platform-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #f3f3f3;
+  border-radius: 8px;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #111;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0;
+}
+
+.platform-btn:hover {
+  background-color: #1db954;
+  color: white;
+  transform: translateY(-3px);
+}
+
+.platform-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
