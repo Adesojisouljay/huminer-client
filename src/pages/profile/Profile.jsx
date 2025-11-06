@@ -1,7 +1,12 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import "./index.css";
 
 export default function ProfilePage() {
+
+  const { activeUser } = useSelector((state) => state.huminer);
+  console.log(activeUser)
+
   const user = {
     name: "John Doe",
     avatar: "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg",
@@ -30,15 +35,15 @@ export default function ProfilePage() {
       <div className="profile-header">
         <img className="profile-avatar" src={user.avatar} alt={user.name} />
         <div>
-          <h1>{user.name}</h1>
-          <p>{user.bio}</p>
+          <h1>{activeUser?.username}</h1>
+          <p>{activeUser?.bio}bio</p>
 
           <div className="profile-stats">
-            <span><strong>{user.followers}</strong> Followers</span>
-            <span><strong>{user.following}</strong> Following</span>
+            <span><strong>{activeUser?.followers.length}</strong> Followers</span>
+            <span><strong>{activeUser?.following.length}</strong> Following</span>
           </div>
 
-          <span className="profile-balance">Balance: ₦{user.balance}</span>
+          <span className="profile-balance">Balance: ₦{activeUser?.accountBalance}</span>
         </div>
       </div>
 

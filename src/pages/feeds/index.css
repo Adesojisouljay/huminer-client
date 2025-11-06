@@ -1,159 +1,191 @@
-/* :root {
+:root {
   --gold: #FFD700;
-  --blue: #1E3A8A;
-} */
+  --blue: #0B1120;
+  --dark-blue: #1E3A8A;
+  --card-bg: #121A2B;
+  --border-color: rgba(255, 255, 255, 0.1);
+}
 
 .feed-page {
-  padding: 20px;
-  max-width: 900px;
+  padding: 20px 0;
+  max-width: 600px;
   margin: auto;
+  color: #fff;
+  font-family: "Inter", sans-serif;
 }
 
-.filter-bar {
-  display: flex;
-  justify-self: center;
-  justify-content: center;
-  gap: 20px;
-  width: 100%;
-  padding: 10px;
-}
-
-.feed-page h1 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.feed-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.feed-card {
-  display: flex;
-  /* background: white; */
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.feed-image {
-  width: 200px;
-  object-fit: cover;
-}
-
-.feed-content {
-  padding: 15px;
-  flex: 1;
-}
-
-/* .feed-title{
-  color: var(--gold);
-} */
-
-.feed-author {
-  font-size: 0.9rem;
-  color: var(--gold);
-}
-
-.feed-snippet {
-  margin: 10px 0;
-}
-
-.feed-stats-action {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.feed-stats {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.feed-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
+/* ---------- STORIES (Instagram style) ---------- */
 .stories-bar {
   display: flex;
   overflow-x: auto;
-  gap: 10px;
-  padding: 10px 0;
+  gap: 14px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+  scrollbar-width: none;
+}
+
+.stories-bar::-webkit-scrollbar {
+  display: none;
 }
 
 .story-circle {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 70px;
   cursor: pointer;
+  text-align: center;
 }
 
 .story-circle img,
 .story-circle video {
-  width: 60px;
-  height: 60px;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
   object-fit: cover;
-  border-radius: 50%;
-}
-
-.audio-thumbnail {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: var(--gold);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26px;
-  color: var(--blue);
-}
-
-.story-circle img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  border: 2px solid var(--gold);
-  object-fit: cover;
+  padding: 2px;
+  background: linear-gradient(45deg, #ff0050, #ff7b00, #ffd700);
 }
 
 .story-circle span {
+  margin-top: 6px;
   font-size: 12px;
-  display: block;
-  margin-top: 5px;
+  color: #eaeaea;
 }
 
-.story-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.9);
+/* ---------- FEED LIST ---------- */
+.feed-list {
   display: flex;
   flex-direction: column;
+  gap: 30px;
+}
+
+/* Each feed card */
+.feed-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.feed-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+/* Post image (full width, like Instagram) */
+.feed-image {
+  width: 100%;
+  height: 360px;
+  object-fit: cover;
+}
+
+/* Feed content */
+.feed-content {
+  padding: 12px 16px;
+}
+
+.feed-title {
+  text-decoration: none;
+  color: #fff;
+}
+
+.feed-title h2 {
+  font-size: 15px;
+  margin: 6px 0;
+  font-weight: 600;
+}
+
+.feed-author {
+  font-size: 13px;
+  color: #aaa;
+  margin-bottom: 6px;
+}
+
+.feed-snippet {
+  font-size: 14px;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+/* ---------- ACTIONS & STATS ---------- */
+.feed-stats-action {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  color: white;
+  padding: 8px 0;
+  border-top: 1px solid var(--border-color);
+  margin-top: 6px;
 }
 
-.story-modal img {
-  max-width: 80%;
-  max-height: 70%;
+.feed-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 22px;
+}
+
+.feed-actions .icon {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.feed-actions .icon:hover {
+  transform: scale(1.2);
+  color: var(--gold);
+}
+
+.feed-actions span {
+  font-size: 14px;
+  color: #ddd;
+}
+
+.feed-stats {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--gold);
+}
+
+/* ---------- FILTER BAR ---------- */
+.filter-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: #0e1629;
   border-radius: 10px;
+  padding: 6px 10px;
+  margin: 0 auto 18px;
+  width: 90%;
 }
 
-/* Optional buttons styling tied to root colors */
+.filter-bar button {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 14px;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.filter-bar button:hover {
+  color: var(--gold);
+}
+
+.filter-bar button.active {
+  color: var(--gold);
+  font-weight: 600;
+  background-color: rgba(255, 215, 0, 0.15);
+}
+
+/* ---------- TIP POPUP ---------- */
 .view-btn {
   display: inline-block;
-  background-color: var(--blue);
+  background-color: var(--dark-blue);
   color: white;
   padding: 8px 14px;
   border-radius: 6px;
@@ -162,5 +194,6 @@
 }
 
 .view-btn:hover {
-  background-color: darkblue;
+  background-color: var(--gold);
+  color: var(--blue);
 }

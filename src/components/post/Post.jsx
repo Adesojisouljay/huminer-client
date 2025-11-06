@@ -1,25 +1,19 @@
-import React, { useState } from "react";
-import { AiOutlineLike, AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { AiOutlineLike, AiOutlineEye, AiOutlineEyeInvisible, AiOutlineMessage } from "react-icons/ai";
 import TipPopup from "../tip-popup/TipPopup";
+import { getPostById, addComment } from "../../api/postApi";
+import { LoadingSkeleton } from "../skeleton/LoadingSkeleton";
 import "./index.css";
 
 export default function SinglePostPage() {
-  const post = {
-    id: 1,
-    author: "Soji",
-    title: "Check out my new song!",
-    content:
-      "I just released a fresh track and I’m so excited to share it with you guys! 🎶🔥",
-    image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG1RjPbiW0rp7uKIasNl4SdZuCiQpQFQDejQ&s",
-    likes: 5,
-    tippedAmount: 800,
-    comments: 3,
-    likedBy: ["Jane", "Mike", "Ada", "Kola", "Tosin"],
-  };
 
+  const { postId } = useParams();
+
+  const [post, setPost] = useState({})
   const [showLikedBy, setShowLikedBy] = useState(false);
   const [showTipPopup, setShowTipPopup] = useState(false);
+  const [loading, setLoading] = useState(false)
   const [tipTarget, setTipTarget] = useState(null);
   const [comments, setComments] = useState([
     {
@@ -54,6 +48,23 @@ export default function SinglePostPage() {
 
   const [newCommentText, setNewCommentText] = useState("");
 
+  useEffect(() => {
+    getSinglePost();
+  },[postId])
+  
+  const getSinglePost = async () => {
+    try {
+      setLoading(true)
+      const response = await getPostById(postId);
+      console.log(response)
+      setPost(response.post)
+      setLoading(false)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+  }
+
   const openTipPopup = (target) => {
     setTipTarget(target);
     setShowTipPopup(true);
@@ -78,20 +89,27 @@ export default function SinglePostPage() {
     setComments(tipRecursively(comments));
   };
 
-  const handleAddComment = () => {
+  const handleAddComment = async () => {
     if (!newCommentText.trim()) return;
-    const newComment = {
-      id: Date.now(),
-      author: "You",
-      avatar: "https://i.pravatar.cc/40?u=new",
-      text: newCommentText,
-      likes: 0,
-      tippedAmount: 0,
-      children: [],
-    };
-    setComments([newComment, ...comments]);
-    setNewCommentText("");
-  };
+  
+    try {
+      setLoading(true);
+      const commentData = { content: newCommentText };
+      const response = await addComment(postId, commentData);
+  
+      if (response.success) {
+        // Update local state with new post data (which includes updated comments)
+        setPost(response.post);
+        setNewCommentText("");
+      } else {
+        console.error(response.message);
+      }
+    } catch (error) {
+      console.error("Error adding comment:", error);
+    } finally {
+      setLoading(false);
+    }
+  };  
 
   const handleAddReply = (parentId, replyText) => {
     if (!replyText.trim()) return;
@@ -118,26 +136,26 @@ export default function SinglePostPage() {
     setComments(addReplyRecursively(comments));
   };
 
-  return (
-    <div className="single-post">
-      <img src={post.image} alt={post.title} className="post-image" />
-      <h1>{post.title}</h1>
-      <p className="author">By {post.author}</p>
-      <p className="content">{post.content}</p>
+  return  loading ? (<LoadingSkeleton/>) :
+   ( <div className="single-post">
+      <img src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG1RjPbiW0rp7uKIasNl4SdZuCiQpQFQDejQ&s"} alt={post?.title} className="post-image" />
+      <h1>{post?.title}</h1>
+      <p className="author">By {post?.author}</p>
+      <p className="content">{post?.body}</p>
 
       <div className="post-stats">
-        <span>❤️ {post.likes} Likes</span>
-        <span>💰 ₦{post.tippedAmount} Tipped</span>
-        <span>💬 {post.comments} Comments</span>
+        <span>❤️ {post?.tips?.length} Likes</span>
+        <span>💰 ₦{post?.totalTips} Tipped</span>
+        <span>💬 {post?.comments?.length} Comments</span>
       </div>
 
       <div className="post-like-wrapper">
         <div className="post-likes">
           <AiOutlineLike
             className="icon"
-            onClick={() => openTipPopup({ type: "post", id: post.id })}
+            onClick={() => openTipPopup({ type: "post", id: post?._id })}
           />
-          <span>3.4k</span>
+          <span>{post?.tips?.length}</span>
         </div>
         <div style={{ display: "flex", alignSelf: "center" }}>
           <button onClick={() => setShowLikedBy(!showLikedBy)}>
@@ -148,7 +166,7 @@ export default function SinglePostPage() {
 
       {showLikedBy && (
         <ul className="liked-by-list card">
-          {post.likedBy.map((name, idx) => (
+          {post?.likedBy.map((name, idx) => (
             <li key={idx}>{name}</li>
           ))}
         </ul>
@@ -168,18 +186,24 @@ export default function SinglePostPage() {
       {/* Comments */}
       <div className="comments-section">
         <h3>Comments</h3>
-        <CommentList comments={comments} onOpenTipPopup={openTipPopup} onAddReply={handleAddReply} />
+        { post?.comments?.length === 0 ? <div className="no-comment">
+          <AiOutlineMessage className="icon"/>
+          <p>No comments yet, start conversation.</p>
+        </div> :
+          <CommentList comments={post?.comments} onOpenTipPopup={openTipPopup} onAddReply={handleAddReply} />
+          }
       </div>
 
       {showTipPopup && (
         <TipPopup
-          balance={2000}
+          // balance={2000}
           onClose={() => setShowTipPopup(false)}
           onTip={handleTipSubmit}
+          postId={postId}
         />
       )}
-    </div>
-  );
+    </div>)
+
 }
 
 function CommentList({ comments, onOpenTipPopup, onAddReply, level = 0 }) {
@@ -188,15 +212,15 @@ function CommentList({ comments, onOpenTipPopup, onAddReply, level = 0 }) {
 
   return (
     <ul style={{ marginLeft: level * 20 }}>
-      {comments.map((comment) => (
+      {comments?.map((comment) => (
         <li className="comment-item card" key={comment.id}>
-          <img src={comment.avatar} alt={comment.author} className="comment-avatar" />
+          <img src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG1RjPbiW0rp7uKIasNl4SdZuCiQpQFQDejQ&s"} alt={comment.author} className="comment-avatar" />
           <div className="comment-body">
-            <strong>{comment.author}</strong>
-            <p>{comment.text}</p>
+            <strong>{comment.commentAuthor}</strong>
+            <p>{comment.content}</p>
             <div className="comment-actions">
-              <span>❤️ {comment.likes}</span>
-              <span>💰 ₦{comment.tippedAmount}</span>
+              <span>❤️ {comment.tips?.length}</span>
+              <span>💰 ₦{comment.totalTips}</span>
               <button onClick={() => onOpenTipPopup({ type: "comment", id: comment.id })}>Tip</button>
               <button onClick={() => setActiveReplyId(activeReplyId === comment.id ? null : comment.id)}>
                 Reply

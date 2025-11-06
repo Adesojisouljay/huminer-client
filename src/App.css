@@ -15,3 +15,28 @@ a{
     cursor: pointer;
     /* color: var(--blue); */
 }
+
+.app-layout {
+    display: flex;
+    justify-content: center;
+    /* flex-direction: column; */
+    min-height: 100vh;
+    background-color: #0b1120; /* dark background */
+    color: white;
+  }
+  
+  /* Sidebar occupies fixed space */
+  /* .sidebar {
+    width: 240px;
+  } */
+  
+  
+  /* Content below navbar */
+  .app-content {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    /* padding: 20px; */
+    margin-top: 10px;
+  }
+  

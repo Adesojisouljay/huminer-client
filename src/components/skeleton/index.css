@@ -1,0 +1,69 @@
+/* Skeleton Loader Styles */
+.skeleton {
+    animation: fadeIn 0.3s ease-in-out;
+    width: 100%;
+  }
+  
+  .skeleton-image {
+    width: 100%;
+    height: 300px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #171829 25%, #130f0f 50%, #0e0b0b 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    margin-bottom: 1rem;
+  }
+  
+  .skeleton-text {
+    height: 20px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #171829 25%, #130f0f 50%, #0e0b0b 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    margin-bottom: 10px;
+  }
+  
+  .skeleton-text.title {
+    width: 60%;
+    height: 28px;
+  }
+  
+  .skeleton-text.author {
+    width: 40%;
+    height: 18px;
+  }
+  
+  .skeleton-text.content {
+    width: 90%;
+    height: 60px;
+  }
+  
+  .skeleton-stats {
+    display: flex;
+    gap: 10px;
+    margin-top: 1rem;
+  }
+  
+  .skeleton-stat {
+    width: 70px;
+    height: 20px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #171829 25%, #130f0f 50%, #0e0b0b 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+  
+  @keyframes loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
