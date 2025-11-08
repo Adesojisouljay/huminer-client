@@ -32,6 +32,10 @@
   }
 
   .post-title{
+    color: white;
+    font: 18px;
+    font-weight: 700;
+    padding: 10px;
     border: none;
     background-color: inherit;
     border-bottom: 1px solid var(--blue);

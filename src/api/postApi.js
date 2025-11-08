@@ -53,12 +53,18 @@ export const addComment = async (postId, commentData) => {
 
 // 🟢 TIP a comment
 export const tipComment = async (postId, commentId, tipData) => {
-  const response = await API.post(
-    `/posts/${postId}/comment/${commentId}/tip`,
-    tipData,
-    getAuthHeaders()
-  );
-  return response.data;
+  try {
+    const response = await API.post(
+      `/posts/${postId}/comment/${commentId}/tip`,
+      tipData,
+      getAuthHeaders()
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Tip comment error:", error.response?.data?.message || error.message);
+    alert(error.response?.data?.message || "Error tipping comment");
+    return { success: false };
+  }
 };
 
 // 🆕 Get random posts (for "Suggested posts" or "Discover" sections)
