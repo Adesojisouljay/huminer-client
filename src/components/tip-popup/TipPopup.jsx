@@ -1,40 +1,48 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { AiOutlineClose } from "react-icons/ai";
-import { tipPost } from "../../api/postApi";
+import { tipPost, tipComment } from "../../api/postApi"; // <-- import both
 import "./index.css";
 
-export default function TipPopup({ onClose, onTip, postId }) {
+export default function TipPopup({ onClose, onTip, postId, commentId, type }) {
+  const target = { type: "post" | "comment", postId, commentId }
   const [amount, setAmount] = useState("");
   const amounts = [100, 200, 500, 1000, 5000];
 
   const { activeUser } = useSelector((state) => state.huminer);
-  console.log(activeUser)
 
-  const handleSubmit = (amount) => {
+  const handleTip = async () => {
+    if (!amount) {
+      alert("Please select or enter an amount.");
+      return;
+    }
     if (amount > activeUser.accountBalance) {
       alert("Amount exceeds your balance!");
       return;
     }
-    onTip(amount);
-  };
-
-  const tipUser = async () => {
 
     const tipData = {
-      amount: Number(amount), 
-      currency: "NGN"
-    }
-
-    console.log("object...")
+      amount: Number(amount),
+      currency: "NGN",
+    };
+    console.log(postId, type)
 
     try {
-      const tip = await tipPost(postId, tipData);
-      console.log(tip)
+      let response;
+      if (type === "post") {
+        response = await tipPost(postId, tipData);
+      } else if (type === "comment") {
+        response = await tipComment(postId, target.commentId, tipData);
+      }
+
+      console.log("Tip successful:", response);
+      onTip(amount);
+      onClose();
     } catch (error) {
-      console.log();
+      console.error("Tip failed:", error);
+      alert(error?.response?.data?.message || "Failed to send tip.");
     }
-  }
+  };
 
   return (
     <div className="tip-popup">
@@ -44,7 +52,11 @@ export default function TipPopup({ onClose, onTip, postId }) {
 
         <div className="tip-options">
           {amounts.map((amt) => (
-            <button key={amt} onClick={() => handleSubmit(amt)}>
+            <button
+              key={amt}
+              onClick={() => setAmount(amt)}
+              className={amt === amount ? "active" : ""}
+            >
               ₦{amt}
             </button>
           ))}
@@ -57,12 +69,10 @@ export default function TipPopup({ onClose, onTip, postId }) {
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
           />
-          <button onClick={() => tipUser()}>
-            Tip Custom
-          </button>
+          <button onClick={handleTip}>Send Tip</button>
         </div>
-       <AiOutlineClose className="close-btn" onClick={onClose} />
 
+        <AiOutlineClose className="close-btn" onClick={onClose} />
       </div>
     </div>
   );
