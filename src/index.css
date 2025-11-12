@@ -52,3 +52,7 @@ code {
   .danger-btn:hover{
       background-color: rgb(135, 98, 98);
   }
+
+  .cancel-btn{
+    background-color: #4f5357;
+  }

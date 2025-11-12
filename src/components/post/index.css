@@ -105,7 +105,7 @@
   }
   
   .comments-section strong {
-    color: #333;
+    color: gold;
   }
   
   .comments-section li::before {
@@ -214,8 +214,8 @@
   border-color: var(--blue);
 }
 
-.reply-box button {
-  background: var(--gold);
+.reply-box {
+  /* background: var(--gold); */
   border: none;
   padding: 8px 12px;
   border-radius: 6px;
@@ -268,4 +268,31 @@
 .audio-player {
   width: 100%;
   outline: none;
+}
+
+.reply-item {
+  background: var(--blue);
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+.reply-tag {
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+.reply-actions {
+  display: flex;
+  gap: 15px;
+  /* background: #0077ff; */
+  background: var(--blue);
+  padding: 3px 6px;
+  font-size: 11px;
+  border-radius: 4px;
+}
+
+.reply-box {
+  margin-left: 35px;
+  border-left: 2px solid var(--blue);
 }

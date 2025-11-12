@@ -44,21 +44,21 @@ const Sidebar = () => {
           <FaHome /> Home
         </Link>
 
-        <Link to="/explore" className={getActiveClass("/explore")}>
+        {/* <Link to="/explore" className={getActiveClass("/explore")}>
           <FaCompass /> Explore
-        </Link>
+        </Link> */}
 
         <Link to="/feed" className={getActiveClass("/feed")}>
           <FaCompass /> Feed
         </Link>
 
-        <Link to="/messages" className={getActiveClass("/messages")}>
+        {/* <Link to="/messages" className={getActiveClass("/messages")}>
           <FaEnvelope /> Messages
-        </Link>
+        </Link> */}
 
-        <Link to="/notification" className={getActiveClass("/notification")}>
+        {/* <Link to="/notification" className={getActiveClass("/notification")}>
           <FaBell /> Notifications
-        </Link>
+        </Link> */}
 
         <Link to="/create" className={getActiveClass("/create")}>
           <FaPlusSquare /> Create Post

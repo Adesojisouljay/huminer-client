@@ -60,16 +60,16 @@ export default function StoryViewer({ stories, startIndex, onClose }) {
         <AiOutlineClose className="close-btn" onClick={onClose} />
         <div className="stories-container">
           {currentStory?.type === "image" && (
-            <img className="image-story" src={currentStory.url} alt={currentStory?.user} />
+            <img className="image-story" src={currentStory?.url} alt={currentStory?.user} />
           )}
 
           {currentStory?.type === "video" && (
-            <video className="video-story" ref={videoRef} src={currentStory.url} controls autoPlay />
+            <video className="video-story" ref={videoRef} src={currentStory?.url} controls autoPlay />
           )}
 
           {currentStory?.type === "audio" && (
             <div className="audio-story">
-              <audio ref={videoRef} src={currentStory.url} controls autoPlay />
+              <audio ref={videoRef} src={currentStory?.url} controls autoPlay />
             </div>
           )}
         </div>
