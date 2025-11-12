@@ -27,13 +27,7 @@ a{
     min-height: 100vh;
     background-color: #0b1120; /* dark background */
     color: white;
-  }
-  
-  /* Sidebar occupies fixed space */
-  /* .sidebar {
-    width: 240px;
-  } */
-  
+  }  
   
   /* Content below navbar */
   .app-content {

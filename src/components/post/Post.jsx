@@ -27,6 +27,7 @@ export default function SinglePostPage() {
   const [tipTarget, setTipTarget] = useState(null);
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [newCommentText, setNewCommentText] = useState("");
+  const [commenting, setCommenting] = useState(false)
 
   useEffect(() => {
     getSinglePost();
@@ -59,16 +60,18 @@ export default function SinglePostPage() {
   const handleAddComment = async () => {
     if (!newCommentText.trim()) return;
     try {
-      // setLoading(true);
+      setCommenting(true);
       const response = await addComment(postId, { content: newCommentText });
       if (response.success) {
         setPost(response.post);
         setNewCommentText("");
+        setCommenting(false)
       }
     } catch (error) {
       console.error("Error adding comment:", error);
     } finally {
       setLoading(false);
+      setCommenting(false)
     }
   };
 
@@ -205,7 +208,12 @@ export default function SinglePostPage() {
           value={newCommentText}
           onChange={(e) => setNewCommentText(e.target.value)}
         />
-        <button onClick={handleAddComment}>Submit</button>
+        <button
+          disabled={commenting}
+          onClick={handleAddComment}
+          >
+          {commenting ? "Replying..." : "Send reply"}
+        </button>
       </div>
 
       <div className="comments-section">
@@ -216,7 +224,7 @@ export default function SinglePostPage() {
             <p>No comments yet, start conversation.</p>
           </div>
         ) : (
-          <CommentList comments={post.comments} postId={post._id}/>
+          <CommentList comments={post.comments} postId={post._id} setPost={setPost}/>
         )}
       </div>
 
@@ -232,11 +240,12 @@ export default function SinglePostPage() {
   );
 }
 
-function CommentList({ comments, postId }) {
+function CommentList({ comments, postId, setPost }) {
   const [replyText, setReplyText] = useState("");
   const [activeReplyId, setActiveReplyId] = useState(null);
   const [showTipPopup, setShowTipPopup] = useState(false);
   const [tipTarget, setTipTarget] = useState(null);
+  const [replying, setReplying] = useState(false)
 
   const openTipPopup = (target) => {
     setTipTarget(target);
@@ -246,21 +255,42 @@ function CommentList({ comments, postId }) {
   const handleTipSubmit = async (amount) => {
     if (tipTarget?.type === "comment") {
       const { id: commentId } = tipTarget;
-      const tipData = { amount, currency: "NGN" }; // or dynamic currency
-      console.log(tipData)
-      console.log("postid....", postId)
-      const response = await tipComment(postId, commentId, tipData);
+      const tipData = { amount, currency: "NGN" };
 
+      const response = await tipComment(postId, commentId, tipData);
       if (response.success) {
         alert("Tipped successfully!");
-        window.location.reload(); // reload to see updated tips
+        window.location.reload();
       }
     }
     setShowTipPopup(false);
   };
 
+  // submit reply to either main comment OR reply
+  const submitReply = async (targetComment) => {
+    if (!replyText.trim()) return;
+    setReplying(true)
+
+    const payload = {
+      content: replyText,
+      replyTo: targetComment._id,
+    };
+
+    const res = await addComment(postId, payload);
+    console.log(res)
+
+    
+    if (res.success) {
+      setReplyText("");
+      setActiveReplyId(null);
+      setPost(res.post);
+      setReplying(false)
+      // window.location.reload();
+    }
+  };
+
   return (
-    <ul style={{ marginLeft: 20 }}>
+    <ul style={{ marginLeft: 10 }}>
       {comments?.map((comment) => (
         <li className="comment-item card" key={comment._id}>
           <img
@@ -268,6 +298,7 @@ function CommentList({ comments, postId }) {
             alt={comment.commentAuthor}
             className="comment-avatar"
           />
+
           <div className="comment-body">
             <strong>{comment.commentAuthor}</strong>
             <p>{comment.content}</p>
@@ -286,38 +317,94 @@ function CommentList({ comments, postId }) {
 
               <button
                 onClick={() =>
-                  setActiveReplyId(
-                    activeReplyId === comment._id ? null : comment._id
-                  )
+                  setActiveReplyId(activeReplyId === comment._id ? null : comment._id)
                 }
               >
                 Reply
               </button>
             </div>
 
+            {/* Reply input (for both comment + replies) */}
             {activeReplyId === comment._id && (
               <div className="reply-box">
                 <input
                   type="text"
-                  placeholder="Write a reply..."
+                  placeholder={`Replying...`}
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                 />
-                <button
-                  onClick={() => {
-                    // handle reply here later
-                    setReplyText("");
-                    setActiveReplyId(null);
-                  }}
-                >
-                  Submit
+                <button className="cancel-btn" onClick={() => setActiveReplyId(null)}>
+                  cancel
+                </button>
+                <button onClick={() => submitReply({ _id: activeReplyId })}>
+                {replying ? "Sending Replying" : "Send reply"}
                 </button>
               </div>
             )}
 
-            {/* Nested replies */}
+            {/* ONE LEVEL CHILDREN */}
             {comment.children?.length > 0 && (
-              <CommentList comments={comment.children} postId={postId} />
+              <ul className="reply-list">
+                {comment.children.map((child) => (
+                  <li className="reply-item" key={child._id}>
+                    <div className="reply-body">
+                      <strong>{child.commentAuthor}</strong>
+
+                      <p>
+                        <span className="reply-tag">@{child.parentAuthor}</span>{" "}
+                        {child.content}
+                      </p>
+
+                      <div className="reply-actions">
+                        <span>❤️ {child.tips?.length || 0}</span>
+                        <span>💰 ₦{child.totalTips || 0}</span>
+
+                        <button
+                          onClick={() =>
+                            openTipPopup({
+                              type: "comment",
+                              id: child._id,
+                            })
+                          }
+                        >
+                          Tip
+                        </button>
+
+                        {/* 🔥 REPLY TO REPLY BUTTON */}
+                        <button
+                          onClick={() =>
+                            setActiveReplyId(
+                              activeReplyId === comment._id
+                                ? null
+                                : child._id // reply to this child
+                            )
+                          }
+                        >
+                          Reply
+                        </button>
+                      </div>
+
+                      {/* Input box appears under MAIN comment but targets child */}
+                      {activeReplyId === child._id && (
+                        <div className="reply-box">
+                          <input
+                            type="text"
+                            placeholder={`Replying to @${child.commentAuthor}...`}
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                          />
+                          <button className="cancel-btn" onClick={() => setActiveReplyId(null)}>
+                            cancel
+                          </button>
+                          <button onClick={() => submitReply(child)}>
+                          {replying ? "Replying..." : "Send reply"}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
         </li>
@@ -335,3 +422,4 @@ function CommentList({ comments, postId }) {
     </ul>
   );
 }
+
