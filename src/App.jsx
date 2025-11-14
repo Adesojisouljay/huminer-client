@@ -18,6 +18,8 @@ import LinkTree from "./pages/link-tree/LinkTree";
 import Sidebar from "./components/sidebar/SideBar";
 import Suggestions from "./components/suggestions/Suggestions";
 import SongPage from "./pages/song-page/SongPage";
+import NotificationPage from "./components/notification/Notification";
+import { fetchNotificationsThunk } from "./redux/notificationSlice";
 import "./App.css";
 
 function App() {
@@ -26,23 +28,13 @@ function App() {
 
   const dispatch = useDispatch();
   const { activeUser } = useSelector((state) => state.huminer);
-  console.log(activeUser?._id)
+  // console.log(activeUser?._id)
 
-  // useEffect(() => {
-  //   const token = localStorage.getItem("huminerToken");
-  //   if (token && activeUser) {
-  //     try {
-  //       // const decoded = jwtDecode(token);
-  //       // const userId = decoded?.id || decoded?.userId;
-  //       // console.log("userId...", decoded)
-  //       // if (userId) {
-  //         // dispatch(fetchUserProfileThunk(activeUser?._id));
-  //       // }
-  //     } catch (e) {
-  //       console.error("Invalid token", e);
-  //     }
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (activeUser?._id) {
+      dispatch(fetchNotificationsThunk(activeUser._id));
+    }
+  }, [activeUser, dispatch]);
 
 
   const hideSideBarRoutes = ["/", "/login", "/signup"]
@@ -60,10 +52,6 @@ function App() {
           </div>
         )}
 
-        {/* Main content area */}
-        {/* <div className="app-main"> */}
-          {/* <Navbar balance={balance} /> */}
-
           <div className={shouldHideSidebar ? "" : "app-content"}>
             <Routes>
               <Route path="/" element={<HomePage />} />
@@ -78,6 +66,7 @@ function App() {
               <Route path="/badge" element={<BadgeGenerator1 />} />
               <Route path="/link-tree" element={<LinkTree />} />
               <Route path="/song/:id" element={<SongPage />} />
+              <Route path="/notification" element={<NotificationPage />} />
             </Routes>
           </div>
         {/* </div> */}

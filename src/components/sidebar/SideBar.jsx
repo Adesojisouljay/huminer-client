@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import {
   FaHome,
   FaCompass,
-  FaEnvelope,
   FaBell,
   FaPlusSquare,
   FaUser,
@@ -15,12 +14,16 @@ import LogoutButton from "../logout/Logout";
 import "./index.css";
 
 const Sidebar = () => {
+
   const { activeUser } = useSelector((state) => state.huminer);
+  const { notifications } = useSelector((state) => state.notifications);
+
+  const unreadNotificationCount = notifications?.filter((n) => !n.read)?.length;
+
+  console.log("....not...",notifications)
   const location = useLocation();
 
   const getActiveClass = (path) => (location.pathname === path ? "active" : "");
-
-  console.log(location.pathname)
 
   return (
     <aside className="sidebar">
@@ -44,21 +47,16 @@ const Sidebar = () => {
           <FaHome /> Home
         </Link>
 
-        {/* <Link to="/explore" className={getActiveClass("/explore")}>
-          <FaCompass /> Explore
-        </Link> */}
-
         <Link to="/feed" className={getActiveClass("/feed")}>
           <FaCompass /> Feed
         </Link>
 
-        {/* <Link to="/messages" className={getActiveClass("/messages")}>
-          <FaEnvelope /> Messages
-        </Link> */}
-
-        {/* <Link to="/notification" className={getActiveClass("/notification")}>
+        <Link to="/notification" className={getActiveClass("/notification")} style={{ position: "relative" }}>
           <FaBell /> Notifications
-        </Link> */}
+          {unreadNotificationCount > 0 && (
+            <span className="notification-badge">{unreadNotificationCount}</span>
+          )}
+        </Link>
 
         <Link to="/create" className={getActiveClass("/create")}>
           <FaPlusSquare /> Create Post
