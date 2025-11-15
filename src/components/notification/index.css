@@ -1,0 +1,93 @@
+:root {
+    --gold: #ffd700;
+  }
+  
+  /* PAGE */
+  .notification-container {
+    padding: 20px;
+    width: 100%;
+    margin: auto;
+    color: white;
+  }
+  
+  .notification-container h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: var(--gold);
+  }
+  
+  .notification-loading {
+    text-align: center;
+    margin-top: 40px;
+    color: #ccc;
+  }
+  
+  .no-notifications {
+    text-align: center;
+    margin-top: 60px;
+    font-size: 18px;
+    color: #777;
+  }
+  
+  /* CARD */
+  .notification-item {
+    background: #111827;
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    border-left: 4px solid transparent;
+    transition: 0.2s ease;
+  }
+  
+  .notification-item.unread {
+    border-left: 4px solid var(--gold);
+    background: rgba(255, 215, 0, 0.1);
+  }
+  
+  .notification-item:hover {
+    background: rgba(255, 215, 0, 0.2);
+  }
+  
+  .notification-message {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  
+  .notification-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #888;
+  }
+  
+  .unread-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+  
+
+  .notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .mark-all-btn {
+    background: var(--gold);
+    color: #0b1120;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: 0.2s;
+  }
+  
+  .mark-all-btn:hover {
+    background: #ffec80;
+  }
+  

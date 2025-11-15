@@ -234,6 +234,7 @@ export default function SinglePostPage() {
           onTip={handleTipSubmit}
           postId={postId}
           type="post"
+          setPost={setPost}
         />
       )}
     </div>
@@ -253,16 +254,6 @@ function CommentList({ comments, postId, setPost }) {
   };
 
   const handleTipSubmit = async (amount) => {
-    if (tipTarget?.type === "comment") {
-      const { id: commentId } = tipTarget;
-      const tipData = { amount, currency: "NGN" };
-
-      const response = await tipComment(postId, commentId, tipData);
-      if (response.success) {
-        alert("Tipped successfully!");
-        window.location.reload();
-      }
-    }
     setShowTipPopup(false);
   };
 
@@ -417,6 +408,7 @@ function CommentList({ comments, postId, setPost }) {
           postId={postId}
           commentId={tipTarget?.id}
           type="comment"
+          setPost={setPost}
         />
       )}
     </ul>

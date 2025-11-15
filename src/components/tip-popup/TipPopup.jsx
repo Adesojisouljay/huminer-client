@@ -4,7 +4,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { tipPost, tipComment } from "../../api/postApi"; // <-- import both
 import "./index.css";
 
-export default function TipPopup({ onClose, onTip, postId, commentId, type }) {
+export default function TipPopup({ onClose, onTip, postId, commentId, type, setPost }) {
   const target = { type: "post" | "comment", postId, commentId }
   const [amount, setAmount] = useState("");
   const amounts = [100, 200, 500, 1000, 5000];
@@ -31,11 +31,14 @@ export default function TipPopup({ onClose, onTip, postId, commentId, type }) {
       let response;
       if (type === "post") {
         response = await tipPost(postId, tipData);
+        
       } else if (type === "comment") {
         response = await tipComment(postId, target.commentId, tipData);
+        alert("Tipped successfully!");
       }
 
       console.log("Tip successful:", response);
+      setPost(response.post)
       onTip(amount);
       onClose();
     } catch (error) {
