@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { RiMusicAiLine, RiCameraFill, RiVideoAddFill } from "react-icons/ri";
 import { createPost } from "../../api/postApi";
+import { uploadToCloudinary } from "../../helpers";
 import "./index.css";
 
 export default function CreatePostPage() {
@@ -84,37 +84,6 @@ export default function CreatePostPage() {
     };
   }, [imagePreview, audioPreview, videoPreview]);
 
-  // ===== Cloudinary upload helper =====
-  const uploadToCloudinary = async (file, type) => {
-    if (!file) throw new Error("No file provided to uploadToCloudinary");
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const preset = process.env.REACT_APP_CLOUDINARY_PRESET;
-    const cloudUrl = process.env.REACT_APP_CLOUDINARY_URL;
-
-    if (!preset || !cloudUrl) {
-      throw new Error("Missing Cloudinary config (cloudUrl or PRESET).");
-    }
-
-    const resourceType =
-      type === "image" ? "image" : type === "video" || type === "audio" ? "video" : "raw";
-    const uploadUrl = `${cloudUrl}/${resourceType}/upload`;
-    formData.append("upload_preset", preset);
-
-    try {
-      const res = await axios.post(uploadUrl, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        // optional: set timeout if you want
-        // timeout: 120000
-      });
-      return res.data.secure_url;
-    } catch (err) {
-      console.error("Cloudinary upload error:", err.response?.data || err.message || err);
-      throw err;
-    }
-  };
-
   // ===== Submit post =====
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -154,8 +123,6 @@ export default function CreatePostPage() {
       };
 
       const res = await createPost(postData); // your API function
-      console.log("Post created:", res);
-
       
       // Reset form + revoke previews
       setPostTitle("");

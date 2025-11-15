@@ -28,7 +28,6 @@ function App() {
 
   const dispatch = useDispatch();
   const { activeUser } = useSelector((state) => state.huminer);
-  // console.log(activeUser?._id)
 
   useEffect(() => {
     if (activeUser?._id) {
@@ -41,7 +40,6 @@ function App() {
   const hideSuggestionBarRoutes = ["/", "/create", "/login", "/signup"]
   const shouldHideSidebar = hideSideBarRoutes.includes(pathname);
   const shouldHideSuggestionbar = hideSuggestionBarRoutes.includes(pathname);
-  console.log(hideSideBarRoutes.includes(pathname))
   return (
     // <Router>
       <div className={shouldHideSidebar ? "" : "app-layout"}>

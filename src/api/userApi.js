@@ -11,26 +11,28 @@ const getAuthHeaders = () => {
 
 // === AUTH & USER API CALLS ===
 export const registerUser = async (userData) => {
-  console.log("Sending registration data:", userData);
   const response = await API.post("/users/register", userData);
-  console.log("response...", response)
   return response.data; // ✅ Always return data
 };
 
 export const loginUser = async (credentials) => {
   const response = await API.post("/users/login", credentials);
-  console.log(response)
   return response.data;
 };
 
 export const getUserProfile = async (id) => {
   const response = await API.get(`/users/${id}`);
-  console.log("profile......", response)
   return response.data;
 };
 
+export const getUserByUsername = async (username) => {
+  const response = await API.get(`/users/profile/${username}`);
+  return response.data.user;
+};
+
 export const updateUserProfile = async (id, updates) => {
-  const response = await API.put(`/${id}`, updates);
+  // Spread the updates so backend receives raw fields
+  const response = await API.put(`/users/profile/${id}`, { ...updates }, getAuthHeaders());
   return response.data;
 };
 
@@ -48,13 +50,13 @@ export const getRandomUsers = async (limit = 5) => {
 
 // 🆕 Follow a user
 export const followUser = async (userId) => {
-  console.log(userId)
+  
   const response = await API.put(
     `/users/follow/${userId}`,
     {}, // no body
     getAuthHeaders() // attach Bearer token
   );
-  console.log(response)
+
   return response.data;
 };
 
@@ -66,7 +68,6 @@ export const unfollowUser = async (userId) => {
     getAuthHeaders()
   );
 
-  console.log(response)
   return response.data;
 };
 

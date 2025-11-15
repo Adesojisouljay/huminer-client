@@ -68,17 +68,17 @@ export const fetchUserProfileThunk = createAsyncThunk(
 
 // Update profile
 export const updateUserProfileThunk = createAsyncThunk(
-  "activeUser/updateProfile",
-  async ({ id, updates }, { rejectWithValue }) => {
+  "huminer/updateUserProfile",
+  async ({ id, updates }, thunkAPI) => {
     try {
-      const { data } = await updateUserProfile(id, updates);
-      return data.user;
+      // send raw updates
+      return await updateUserProfile(id, updates);
     } catch (err) {
-      console.error("Update profile error:", err);
-      return rejectWithValue(err.response?.data?.message || "Profile update failed");
+      return thunkAPI.rejectWithValue(err.response?.data?.message || "Error");
     }
   }
 );
+
 
 // Follow user
 export const followUserThunk = createAsyncThunk(
@@ -163,7 +163,7 @@ const userSlice = createSlice({
 
       // Update Profile
       .addCase(updateUserProfileThunk.fulfilled, (state, action) => {
-        state.activeUser = action.payload;
+        state.activeUser = action.payload.user; // update profile in global state
       })
 
       // Follow User

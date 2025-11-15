@@ -106,7 +106,7 @@
   
   button {
     background-color: var(--gold);
-    color: var(--blue);
+    /* color: var(--blue); */
     font-weight: bold;
     padding: 10px;
     border: none;

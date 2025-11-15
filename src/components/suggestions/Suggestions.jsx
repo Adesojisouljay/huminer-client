@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { getRandomUsers } from "../../api/userApi";
 import { getRandomPosts } from "../../api/postApi";
 import { followUserThunk, unfollowUserThunk } from "../../redux/userSlice";
+import HuminerPostSample from "../../assets/HuminerPostSample.jpeg";
 import "./index.css";
 
 export default function Suggestions() {
@@ -77,12 +78,14 @@ export default function Suggestions() {
         {users?.map((person) => (
           <li key={person._id} className="suggestion-item">
             <img
-              src={"https://i.ytimg.com/vi/-I41691rWiQ/hqdefault.jpg"}
+              src={person.profilePicture || "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"}
               alt={person.username}
             />
             <div>
-              <p className="suggestion-name">{person.username}</p>
-              <span className="suggestion-handle">@{person.username}</span>
+              <Link to={`/profile/${person.username}`}>
+                <p className="suggestion-name">{person.username}</p>
+                <span className="suggestion-handle">@{person.username}</span>
+              </Link>
             </div>
 
             {following[person._id] ? (
@@ -108,19 +111,21 @@ export default function Suggestions() {
       <div className="suggested-content">
         <h3>Suggested content</h3>
         <div className="content-grid">
-          {posts?.map((item, index) => (
-            <a href={item.link} key={index} className="content-card">
+          {posts?.map((post, index) => {
+            const visualMedia = post.media?.filter(m => m.type === "image") || [];
+            return(
+            <a href={post.link} key={index} className="content-card">
               <img
-                src={"https://i.ytimg.com/vi/-I41691rWiQ/hqdefault.jpg"}
-                alt={item.title}
+                src={visualMedia[0]?.url || HuminerPostSample}
+                alt={post.title}
               />
               <div className="content-info">
-                {/* <p className="content-title">{item.title}</p> */}
-                <Link className="feed-title" to={`/post/${item?._id}`}><h2>{item?.title}</h2></Link>
-                <span className="content-author">{item.author}</span>
+                {/* <p className="content-title">{post.title}</p> */}
+                <Link className="feed-title" to={`/post/${post?._id}`}><h2>{post?.title}</h2></Link>
+                <span className="content-author">{post.author}</span>
               </div>
             </a>
-          ))}
+          )})}
         </div>
       </div>
 

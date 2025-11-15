@@ -20,7 +20,6 @@ const Sidebar = () => {
 
   const unreadNotificationCount = notifications?.filter((n) => !n.read)?.length;
 
-  console.log("....not...",notifications)
   const location = useLocation();
 
   const getActiveClass = (path) => (location.pathname === path ? "active" : "");
@@ -34,7 +33,7 @@ const Sidebar = () => {
       <div className="avatar-container">
         <img
           className="user-avatar"
-          src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+          src={activeUser?.profilePicture || "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"}
           alt="user avatar"
         />
         <span>₦{activeUser?.accountBalance || 0}</span>
