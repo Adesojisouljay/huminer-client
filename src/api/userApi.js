@@ -71,4 +71,9 @@ export const unfollowUser = async (userId) => {
   return response.data;
 };
 
-getRandomUsers()
+// 🆕 Claim pending rewards
+export const claimRewards = async () => {
+  const response = await API.post("/users/claim-rewards", {}, getAuthHeaders());
+  console.log("respnse claim...", response)
+  return response.data.user; // Returns the updated user object
+};

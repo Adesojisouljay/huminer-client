@@ -20,12 +20,13 @@ import Suggestions from "./components/suggestions/Suggestions";
 import SongPage from "./pages/song-page/SongPage";
 import NotificationPage from "./components/notification/Notification";
 import { fetchNotificationsThunk } from "./redux/notificationSlice";
+import Chat from "./components/chat/Chat";
+import { socket } from "./helpers/sockets";
+// import getU
 import "./App.css";
 
 function App() {
-
   const { pathname } = useLocation();
-
   const dispatch = useDispatch();
   const { activeUser } = useSelector((state) => state.huminer);
 
@@ -35,46 +36,54 @@ function App() {
     }
   }, [activeUser, dispatch]);
 
+  useEffect(() => {
+    if (activeUser?._id) {
+      // Notify backend that this user is online
+      socket.emit("userOnline", activeUser._id);
 
-  const hideSideBarRoutes = ["/", "/login", "/signup"]
-  const hideSuggestionBarRoutes = ["/", "/create", "/login", "/signup"]
+      // Optionally, listen for updates about online users
+      socket.on("updateOnlineUsers", (onlineIds) => {
+        console.log("Currently online users:", onlineIds);
+      });
+
+      // Clean up on unmount
+      return () => {
+        socket.off("updateOnlineUsers");
+      };
+    }
+  }, [activeUser]); // <-- remove the extra closing brace here
+
+  const hideSideBarRoutes = ["/", "/login", "/signup"];
+  const hideSuggestionBarRoutes = ["/", "/create", "/login", "/signup"];
   const shouldHideSidebar = hideSideBarRoutes.includes(pathname);
   const shouldHideSuggestionbar = hideSuggestionBarRoutes.includes(pathname);
-  return (
-    // <Router>
-      <div className={shouldHideSidebar ? "" : "app-layout"}>
-        {/* Sidebar on the left */}
-        {!shouldHideSidebar && (
-          <div>
-            <Sidebar />
-          </div>
-        )}
 
-          <div className={shouldHideSidebar ? "" : "app-content"}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/feed" element={<FeedPage />} />
-              <Route path="/challenges" element={<ChallengesPage />} />
-              <Route path="/profile/:username" element={<ProfilePage />} />
-              <Route path="/create" element={<CreatePostPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
-              <Route path="/post/:postId" element={<SinglePostPage />} />
-              <Route path="/wallet" element={<WalletPage />} />
-              <Route path="/badge" element={<BadgeGenerator1 />} />
-              <Route path="/link-tree" element={<LinkTree />} />
-              <Route path="/song/:id" element={<SongPage />} />
-              <Route path="/notification" element={<NotificationPage />} />
-            </Routes>
-          </div>
-        {/* </div> */}
-        {/* Right Suggestions Panel */}
-        {!shouldHideSuggestionbar &&<div>
-          <Suggestions />
-        </div>}
+  return (
+    <div className={shouldHideSidebar ? "" : "app-layout"}>
+      {!shouldHideSidebar && <Sidebar />}
+      <div className={shouldHideSidebar ? "" : "app-content"}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/feed" element={<FeedPage />} />
+          <Route path="/challenges" element={<ChallengesPage />} />
+          <Route path="/profile/:username" element={<ProfilePage />} />
+          <Route path="/create" element={<CreatePostPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/post/:postId" element={<SinglePostPage />} />
+          <Route path="/wallet" element={<WalletPage />} />
+          <Route path="/badge" element={<BadgeGenerator1 />} />
+          <Route path="/link-tree" element={<LinkTree />} />
+          <Route path="/song/:id" element={<SongPage />} />
+          <Route path="/notification" element={<NotificationPage />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/chat/:chatId" element={<Chat />} />
+        </Routes>
       </div>
-    // </Router>
+      {!shouldHideSuggestionbar && <Suggestions />}
+    </div>
   );
 }
+
 
 export default App;

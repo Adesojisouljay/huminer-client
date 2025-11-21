@@ -8,7 +8,7 @@ import TipPopup from "../../components/tip-popup/TipPopup";
 import StoryViewer from "../../components/stories/Stories";
 import { getAllPosts } from "../../api/postApi";
 import HuminerPostSample from "../../assets/HuminerPostSample.jpeg";
-import { getDaysUntilPayout } from "../../helpers";
+import { getDaysUntilPayout, formatTimeAgo } from "../../helpers";
 import "./index.css";
 
 export default function FeedPage() {
@@ -162,6 +162,7 @@ export default function FeedPage() {
               <div className="feed-content">
                 <Link className="feed-title" to={`/post/${post._id}`}>
                   <h2>{post.title}</h2>
+                  <span>({formatTimeAgo(post.createdAt)})</span>
                 </Link>
                 <p className="feed-author">By {post.author}</p>
                 <p className="feed-snippet">

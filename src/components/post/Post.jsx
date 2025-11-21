@@ -14,6 +14,7 @@ import TipPopup from "../tip-popup/TipPopup";
 import { getPostById, addComment, tipComment } from "../../api/postApi";
 import { LoadingSkeleton } from "../skeleton/LoadingSkeleton";
 import "./index.css";
+import { formatTimeAgo, getDaysUntilPayout } from "../../helpers";
 import HuminerPostSample from "../../assets/HuminerPostSample.jpeg"
 
 export default function SinglePostPage() {
@@ -28,6 +29,7 @@ export default function SinglePostPage() {
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [newCommentText, setNewCommentText] = useState("");
   const [commenting, setCommenting] = useState(false)
+  console.log(post)
 
   useEffect(() => {
     getSinglePost();
@@ -159,9 +161,16 @@ export default function SinglePostPage() {
       )}
 
       {/* 📝 POST CONTENT */}
-      <h1>{post?.title}</h1>
+      <div className="feed-title">
+        <h2>{post?.title}</h2>
+        <div className="post-dates">
+          <span>Posted: {formatTimeAgo(post.createdAt)}</span>
+          {post.payoutAt && <span>Payout: {formatTimeAgo(post.payoutAt)}</span>}
+        </div>
+      </div>
       <p className="author">By {post?.author}</p>
-      {/* <p className="content">{post?.body}</p> */}
+
+      <p className="author">By {post?.author}</p>
       <div className="content">
         {post?.body?.split("\n").map((paragraph, idx) => (
           paragraph.trim() && <p key={idx}>{paragraph}</p>
@@ -194,10 +203,11 @@ export default function SinglePostPage() {
           </button>
         </div> */}
       </div>
-        {/* <span>❤️ {post?.tips?.length || 0} Likes</span> */}
         <span>💰 ₦{post?.totalTips || 0} Tipped</span>
         <span>💬 {post?.comments?.length || 0} Comments</span>
       </div>
+
+      <span>{getDaysUntilPayout(post.payoutAt)}</span>
 
 
       {/* 💬 COMMENTS SECTION */}
@@ -293,11 +303,15 @@ function CommentList({ comments, postId, setPost }) {
           <div className="comment-body">
             <strong>{comment.commentAuthor}</strong>
             <p>{comment.content}</p>
+            <div className="comment-dates">
+              <span>{formatTimeAgo(comment.createdAt)}</span>
+              {comment.payoutAt && <span>Payout: {formatTimeAgo(comment.payoutAt)}</span>}
+            </div>
+
 
             <div className="comment-actions">
               <span>❤️ {comment.tips?.length || 0}</span>
               <span>💰 ₦{comment.totalTips || 0}</span>
-
               <button
                 onClick={() =>
                   openTipPopup({ type: "comment", id: comment._id })
@@ -345,6 +359,11 @@ function CommentList({ comments, postId, setPost }) {
                         <span className="reply-tag">@{child.parentAuthor}</span>{" "}
                         {child.content}
                       </p>
+                      <div className="reply-dates">
+                        <span>{formatTimeAgo(child.createdAt)}</span>
+                        {child.payoutAt && <span>Payout: {formatTimeAgo(child.payoutAt)}</span>}
+                      </div>
+
 
                       <div className="reply-actions">
                         <span>❤️ {child.tips?.length || 0}</span>

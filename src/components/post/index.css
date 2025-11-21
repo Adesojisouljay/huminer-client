@@ -296,3 +296,22 @@
   margin-left: 35px;
   border-left: 2px solid var(--blue);
 }
+
+/* Post dates (created / payout) */
+.post-dates {
+  font-size: 14px;
+  color: gray;
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+/* Comment dates */
+.comment-dates,
+.reply-dates {
+  font-size: 12px;
+  color: #ccc;
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}

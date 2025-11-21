@@ -1,7 +1,15 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { claimRewardsThunk } from "../../redux/userSlice";
 import "./index.css";
 
 export default function WalletPage() {
+
+  const { activeUser } = useSelector((state) => state.huminer);
+  const dispatch = useDispatch()
+
+  console.log("activeUser...", activeUser)
+
   const [balance, setBalance] = useState(2500);
   const [bankAccounts, setBankAccounts] = useState([
     { id: 1, bankName: "GTBank", accountNumber: "0123456789", accountName: "Soji Music" }
@@ -41,12 +49,20 @@ export default function WalletPage() {
     setShowModal(null);
   };
 
+  const handleClaimRewards = async () => {
+    dispatch(claimRewardsThunk());
+  };
+
   return (
     <div className="wallet-page">
       {/* Wallet Balance */}
       <div className="wallet-balance card">
         <h2>Wallet Balance</h2>
-        <p className="balance-amount">₦{balance.toLocaleString()}</p>
+        <p className="balance-amount">₦{activeUser.accountBalance}</p>
+        {activeUser.pendingRewards > 0 && <>
+          <p>Pending rewards: {activeUser.pendingRewards}</p>
+          <button onClick={handleClaimRewards}>Claim</button>
+        </>}
       </div>
 
       {/* Action Buttons */}

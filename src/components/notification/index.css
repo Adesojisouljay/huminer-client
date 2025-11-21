@@ -31,6 +31,9 @@
   
   /* CARD */
   .notification-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
     background: #111827;
     padding: 16px;
     border-radius: 10px;
@@ -90,4 +93,18 @@
   .mark-all-btn:hover {
     background: #ffec80;
   }
+
+  .user-notification-info{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .notification-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
   

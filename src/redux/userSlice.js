@@ -6,6 +6,7 @@ import {
   updateUserProfile,
   followUser,
   unfollowUser,
+  claimRewards
 } from "../api/userApi";
 
 const initialState = {
@@ -108,6 +109,19 @@ export const unfollowUserThunk = createAsyncThunk(
   }
 );
 
+// 🆕 Claim rewards thunk
+export const claimRewardsThunk = createAsyncThunk(
+  "activeUser/claimRewards",
+  async (_, { rejectWithValue }) => {
+    try {
+      const data = await claimRewards(); // call the API from userApi.js
+      return data; // the backend returns the updated user object
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Failed to claim rewards");
+    }
+  }
+);
+
 // =============== Slice ===============
 const userSlice = createSlice({
   name: "activeUser",
@@ -174,6 +188,20 @@ const userSlice = createSlice({
       // Unfollow User
       .addCase(unfollowUserThunk.fulfilled, (state, action) => {
         state.activeUser = action.payload;
+      })
+
+      // Claim rewards
+      .addCase(claimRewardsThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(claimRewardsThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.activeUser = action.payload; // updated user with new balances
+      })
+      .addCase(claimRewardsThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
 
   },

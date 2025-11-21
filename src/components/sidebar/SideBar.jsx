@@ -9,6 +9,7 @@ import {
   FaUser,
   FaWallet,
   FaEllipsisH,
+  FaFacebookMessenger
 } from "react-icons/fa";
 import LogoutButton from "../logout/Logout";
 import "./index.css";
@@ -59,6 +60,9 @@ const Sidebar = () => {
 
         <Link to="/create" className={getActiveClass("/create")}>
           <FaPlusSquare /> Create Post
+        </Link>
+        <Link to="/chat" className={getActiveClass("/chat")}>
+          <FaFacebookMessenger /> Chat
         </Link>
 
         <Link to={`/profile/${activeUser.username}`} className={getActiveClass("/profile")}>

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import {
   fetchNotificationsThunk,
   markNotificationReadThunk,
@@ -48,7 +49,20 @@ const NotificationPage = () => {
             className={`notification-item ${note.read ? "read" : "unread"}`}
             onClick={() => handleMarkRead(note._id)}
           >
-            <div className="notification-message">{note.message}</div>
+
+            <div className="user-notification-info">
+              <Link to={`/profile/${note.fromUsername}`}>
+                <img
+                  src={
+                    note.fromProfilePicture ||
+                    "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                  }
+                  className="notification-avatar"
+                />
+              </Link>
+              <div className="notification-message">{note.message}</div>
+            </div>
+
             <div className="notification-meta">
               <span>{new Date(note.createdAt).toLocaleString()}</span>
               {!note.read && <span className="unread-dot"></span>}
