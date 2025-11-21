@@ -6,7 +6,7 @@ import { getOrCreateChat, getChatMessages } from "../../api/chatApi";
 import { io } from "socket.io-client";
 import "./index.css";
 
-const SOCKET_URL = process.env.REACT_APP_HUMINER_API || "http://localhost:2111";
+const SOCKET_URL = process.env.REACT_APP_HUMINER_API1 || "http://localhost:2111";
 
 export default function Chat() {
   const { activeUser } = useSelector(state => state.huminer);
