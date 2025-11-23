@@ -10,7 +10,7 @@ import CallModal from "./CallModal";
 import useWebRTC from "../../chat-call-hooks/useWebRTC";
 import "./index.css";
 
-const SOCKET_URL =  "http://localhost:2111";
+const SOCKET_URL = process.env.REACT_APP_HUMINER_API || "http://localhost:2111";
 
 export default function Chat() {
   const { activeUser } = useSelector((state) => state.huminer);
