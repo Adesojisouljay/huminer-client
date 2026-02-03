@@ -245,10 +245,10 @@ export default function Chat() {
                 </div>
 
                 {/* call buttons on each list item */}
-                <div style={{ display: "flex", gap: 6 }}>
+                {/* <div style={{ display: "flex", gap: 6 }}>
                   <button onClick={() => onStartAudioCall(user)} title="Audio call">📞</button>
                   <button onClick={() => onStartVideoCall(user)} title="Video call">🎥</button>
-                </div>
+                </div> */}
               </div>
           ))}
         </div>

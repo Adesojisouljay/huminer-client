@@ -24,7 +24,7 @@ a{
     display: flex;
     justify-content: center;
     /* flex-direction: column; */
-    height: 100vh;
+    min-height: 100vh;
     background-color: #0b1120; /* dark background */
     color: white;
   }  

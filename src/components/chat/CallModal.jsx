@@ -1,6 +1,5 @@
-// src/components/call/CallModal.jsx
 import React, { useEffect, useRef, useState } from "react";
-import "./call.css"; // local minimal styles
+import "./call.css";
 
 export default function CallModal({
   visible,
@@ -15,20 +14,33 @@ export default function CallModal({
 }) {
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
+  const remoteAudioRef = useRef(null);
+
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [videoEnabled, setVideoEnabled] = useState(callType === "video");
 
+  // Attach local stream
   useEffect(() => {
     if (localVideoRef.current && localStream) {
       localVideoRef.current.srcObject = localStream;
     }
   }, [localStream]);
 
+  // Attach remote stream
   useEffect(() => {
-    if (remoteVideoRef.current && remoteStream) {
+    if (!remoteStream) return;
+
+    if (callType === "video" && remoteVideoRef.current) {
       remoteVideoRef.current.srcObject = remoteStream;
+      remoteVideoRef.current.play().catch(console.error);
+    } else if (callType === "audio" && remoteAudioRef.current) {
+      remoteAudioRef.current.srcObject = remoteStream;
+      remoteAudioRef.current
+        .play()
+        .then(() => console.log("Audio playing"))
+        .catch((err) => console.warn("Autoplay blocked?", err));
     }
-  }, [remoteStream]);
+  }, [remoteStream, callType]);
 
   if (!visible) return null;
 
@@ -36,31 +48,52 @@ export default function CallModal({
     <div className="call-modal-overlay">
       <div className="call-modal">
         <div className="call-top">
-          <div className="call-user">{callerName || (isCaller ? "Calling..." : "Incoming Call")}</div>
-          <button className="hangup-btn" onClick={onHangUp}>End</button>
+          <div className="call-user">
+            {callerName || (isCaller ? "Calling..." : "Incoming Call")}
+          </div>
+          <button className="hangup-btn" onClick={onHangUp}>
+            End
+          </button>
         </div>
 
         <div className="call-videos">
+          {/* Remote */}
           <div className="remote-video-wrapper">
             {callType === "video" ? (
-              <video ref={remoteVideoRef} autoPlay playsInline className="remote-video" />
+              <video
+                ref={remoteVideoRef}
+                autoPlay
+                playsInline
+                className="remote-video"
+              />
             ) : (
-              <div className="remote-audio-placeholder">
-                <div className="initials">{callerName?.[0]?.toUpperCase() || "U"}</div>
+              <div className="remote-audio-wrapper">
+                <audio ref={remoteAudioRef} autoPlay hidden />
+                <div className="initials">
+                  {callerName?.[0]?.toUpperCase() || "U"}
+                </div>
                 <div>{callerName || "User"}</div>
               </div>
             )}
           </div>
 
+          {/* Local */}
           <div className="local-video-wrapper">
             {callType === "video" ? (
-              <video ref={localVideoRef} autoPlay muted playsInline className="local-video" />
+              <video
+                ref={localVideoRef}
+                autoPlay
+                muted
+                playsInline
+                className="local-video"
+              />
             ) : (
               <div className="local-audio-placeholder">You</div>
             )}
           </div>
         </div>
 
+        {/* Call Controls */}
         <div className="call-controls">
           <button
             className="control-btn"
@@ -86,7 +119,9 @@ export default function CallModal({
             </button>
           )}
 
-          <button className="control-btn hang" onClick={onHangUp}>Hang up</button>
+          <button className="control-btn hang" onClick={onHangUp}>
+            Hang up
+          </button>
         </div>
       </div>
     </div>
