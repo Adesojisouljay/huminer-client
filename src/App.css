@@ -1,40 +1,40 @@
-.app{
-    margin: 0;
-    background: linear-gradient(135deg, gold, royalblue);
-    /* max-width: 100vw;
+.app {
+  margin: 0;
+  background: linear-gradient(135deg, gold, royalblue);
+  /* max-width: 100vw;
     overflow: hidden; */
 }
 
-a{
-    text-decoration: none;
-    color: white;
+a {
+  text-decoration: none;
+  color: white;
 }
 
-.icon{
-    font-size: 20px;
-    cursor: pointer;
-    /* color: var(--blue); */
+.icon {
+  font-size: 20px;
+  cursor: pointer;
+  /* color: var(--blue); */
 }
 
-.liked-icon{
+.liked-icon {
   color: gold
 }
 
 .app-layout {
-    display: flex;
-    justify-content: center;
-    /* flex-direction: column; */
-    min-height: 100vh;
-    background-color: #0b1120; /* dark background */
-    color: white;
-  }  
-  
-  /* Content below navbar */
-  .app-content {
-    display: flex;
-    justify-content: center;
-    flex: 1;
-    /* padding: 20px; */
-    margin-top: 10px;
-  }
-  
+  display: flex;
+  justify-content: center;
+  /* flex-direction: column; */
+  min-height: 100vh;
+  background-color: #0b1120;
+  /* dark background */
+  color: white;
+}
+
+/* Content below navbar */
+.app-content {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  /* padding: 20px; */
+  margin-top: 10px;
+}

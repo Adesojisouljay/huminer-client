@@ -9,12 +9,13 @@ import {
   FaUser,
   FaWallet,
   FaEllipsisH,
-  FaFacebookMessenger
+  FaFacebookMessenger,
+  FaUsers
 } from "react-icons/fa";
 import LogoutButton from "../logout/Logout";
 import "./index.css";
 
-const Sidebar = () => {
+const Sidebar = ({ toggleSuggestions }) => {
 
   const { activeUser } = useSelector((state) => state.huminer);
   const { notifications } = useSelector((state) => state.notifications);
@@ -77,6 +78,10 @@ const Sidebar = () => {
       <LogoutButton />
 
       <div className="sidebar-footer">
+        {/* Toggle Suggestions Button (Visible on Tablet/Mobile via CSS) */}
+        <button className="more-btn suggestion-toggle-btn" onClick={toggleSuggestions} title="Toggle Suggestions">
+          <FaUsers />
+        </button>
         <div className="profile">
           <div>
             <strong>Learn More</strong>

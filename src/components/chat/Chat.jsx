@@ -217,10 +217,20 @@ export default function Chat() {
     localStream.getVideoTracks().forEach((t) => (t.enabled = enabled));
   };
 
+  // Mobile: toggle between list and chat
+  const [showChatOnMobile, setShowChatOnMobile] = useState(false);
+
+  // ... (existing effects)
+
+  const handleUserSelect = (user) => {
+    setSelectedUser(user);
+    setShowChatOnMobile(true);
+  };
+
   return (
-    <div className="chat-container">
+    <div className={`chat-container ${showChatOnMobile ? "mobile-show-chat" : "mobile-show-list"}`}>
       {/* SIDEBAR */}
-      <div className="chat-sidebar">
+      <div className={`chat-sidebar ${showChatOnMobile ? "hidden-mobile" : ""}`}>
         <h2 className="sidebar-title">Chats</h2>
         <input
           type="text"
@@ -236,29 +246,29 @@ export default function Chat() {
               <div
                 key={user._id}
                 className={`chat-list-item ${selectedUser?._id === user._id ? "active" : ""}`}
-                onClick={() => setSelectedUser(user)}
+                onClick={() => handleUserSelect(user)}
               >
                 <span className={`status-dot ${isOnline(user._id) ? "online" : "offline"}`}></span>
                 <div style={{ flex: 1 }}>
                   <div className="chat-list-name">{user.username}</div>
                   <div className="chat-list-last">{isOnline(user._id) ? "Online" : "Offline"}</div>
                 </div>
-
-                {/* call buttons on each list item */}
-                {/* <div style={{ display: "flex", gap: 6 }}>
-                  <button onClick={() => onStartAudioCall(user)} title="Audio call">📞</button>
-                  <button onClick={() => onStartVideoCall(user)} title="Video call">🎥</button>
-                </div> */}
               </div>
-          ))}
+            ))}
         </div>
       </div>
 
       {/* MAIN CHAT */}
-      <div className="chat-main">
+      <div className={`chat-main ${!showChatOnMobile ? "hidden-mobile" : ""}`}>
         {/* HEADER */}
         {selectedUser && (
           <div className="chat-header">
+            <button
+              className="back-button-mobile"
+              onClick={() => setShowChatOnMobile(false)}
+            >
+              ←
+            </button>
             <div className="chat-header-left">
               <span className="chat-username">{selectedUser.username}</span>
               <span className={`user-status ${isOnline(selectedUser._id) ? "online-text" : "offline-text"}`}>
@@ -313,7 +323,7 @@ export default function Chat() {
       {/* small accept/reject buttons for incoming calls */}
       {incomingCall && (
         <div style={{
-        //   position: "fixed",
+          //   position: "fixed",
           left: 200,
           bottom: 20,
           zIndex: 10000,

@@ -1,133 +1,150 @@
 :root {
-    --gold: #ffd700;
-  }
-  
-  /* ---------- SIDEBAR ---------- */
-  .sidebar {
-    height: 100vh;
-    width: 240px;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 20px 16px;
-    position: sticky;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    height: 100vh;
-    background-color: #0b1120;
-    color: white;
-    z-index: 100;
-  }
-  
-  .sidebar-logo h2 {
-    color: var(--gold);
-    font-size: 20px;
-    /* margin-bottom: 30px; */
-    text-align: center;
-    letter-spacing: 1px;
-  }
+  --gold: #ffd700;
+}
 
-  .avatar-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+/* ---------- SIDEBAR ---------- */
+.sidebar {
+  height: 100vh;
+  width: 240px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 16px;
+  position: sticky;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  height: 100vh;
+  background-color: #0b1120;
+  color: white;
+  z-index: 100;
+}
+
+@media (max-width: 1140px) {
+  .sidebar {
+    display: none;
   }
-  
-  .sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+}
+
+.suggestion-toggle-btn {
+  display: none;
+  /* Hidden by default (desktop/mobile) */
+}
+
+/* Tablet toggle no longer needed as suggestions are visible > 768px */
+@media (min-width: 768px) and (max-width: 1200px) {
+  .suggestion-toggle-btn {
+    display: none;
   }
-  
-  .sidebar-nav a {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    color: #ddd;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 500;
-    padding: 10px 12px;
-    border-radius: 10px;
-    transition: background 0.2s, color 0.2s;
-  }
-  
-  .sidebar-nav a:hover,
-  .sidebar-nav a.active {
-    background-color: rgba(255, 215, 0, 0.15);
-    color: var(--gold);
-  }
-  
-  .sidebar-nav a svg {
-    font-size: 20px;
-  }
-  
-  /* ---------- FOOTER ---------- */
-  .sidebar-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 40px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 12px;
-  }
-  
-  .profile {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .profile img {
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid var(--gold);
-  }
-  
-  .profile div {
-    display: flex;
-    flex-direction: column;
-    font-size: 13px;
-  }
-  
-  .profile div strong {
-    color: #fff;
-  }
-  
-  .profile div span {
-    color: #aaa;
-  }
-  
-  .more-btn {
-    background: none;
-    border: none;
-    color: #aaa;
-    font-size: 20px;
-    cursor: pointer;
-    transition: color 0.2s;
-  }
-  
-  .more-btn:hover {
-    color: var(--gold);
-  }
-  
-  .notification-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: var(--gold);
-    color: #111827;
-    font-size: 10px;
-    font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
+}
+
+.sidebar-logo h2 {
+  color: var(--gold);
+  font-size: 20px;
+  /* margin-bottom: 30px; */
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.avatar-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #ddd;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px 12px;
+  border-radius: 10px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sidebar-nav a:hover,
+.sidebar-nav a.active {
+  background-color: rgba(255, 215, 0, 0.15);
+  color: var(--gold);
+}
+
+.sidebar-nav a svg {
+  font-size: 20px;
+}
+
+/* ---------- FOOTER ---------- */
+.sidebar-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 40px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 12px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gold);
+}
+
+.profile div {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+}
+
+.profile div strong {
+  color: #fff;
+}
+
+.profile div span {
+  color: #aaa;
+}
+
+.more-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.more-btn:hover {
+  color: var(--gold);
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: var(--gold);
+  color: #111827;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

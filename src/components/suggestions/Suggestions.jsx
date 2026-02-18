@@ -7,13 +7,13 @@ import { followUserThunk, unfollowUserThunk } from "../../redux/userSlice";
 import HuminerPostSample from "../../assets/HuminerPostSample.jpeg";
 import "./index.css";
 
-export default function Suggestions() {
+export default function Suggestions({ showMobile, closeMobile }) {
   const [users, setUsers] = useState([]);
   const [posts, setPosts] = useState([]);
   const [following, setFollowing] = useState({}); // track follow state
 
   const dispatch = useDispatch();
-  const {activeUser} = useSelector((state) => state?.huminer);
+  const { activeUser } = useSelector((state) => state?.huminer);
 
   // Initialize following list when user is loaded
   useEffect(() => {
@@ -71,67 +71,76 @@ export default function Suggestions() {
   };
 
   return (
-    <aside className="suggestions">
-      {/* Who to follow section */}
-      <h3>Who to follow</h3>
-      <ul>
-        {users?.map((person) => (
-          <li key={person._id} className="suggestion-item">
-            <img
-              src={person.profilePicture || "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"}
-              alt={person.username}
-            />
-            <div>
-              <Link to={`/profile/${person.username}`}>
-                <p className="suggestion-name">{person.username}</p>
-                <span className="suggestion-handle">@{person.username}</span>
-              </Link>
-            </div>
+    <>
+      {/* Backdrop for mobile */}
+      {showMobile && <div className="suggestions-backdrop" onClick={closeMobile}></div>}
 
-            {following[person._id] ? (
-              <button
-                className="danger-btn"
-                onClick={() => handleUnfollow(person._id)}
-              >
-                Unfollow
-              </button>
-            ) : (
-              <button
-                className="follow-btn"
-                onClick={() => handleFollow(person._id)}
-              >
-                Follow
-              </button>
-            )}
-          </li>
-        ))}
-      </ul>
+      <aside className={`suggestions ${showMobile ? "show" : ""}`}>
+        {/* Close Button for mobile */}
+        <button className="close-suggestions-btn" onClick={closeMobile}>×</button>
 
-      {/* Suggested Content section */}
-      <div className="suggested-content">
-        <h3>Suggested content</h3>
-        <div className="content-grid">
-          {posts?.map((post, index) => {
-            const visualMedia = post.media?.filter(m => m.type === "image") || [];
-            return(
-            <a href={post.link} key={index} className="content-card">
+        {/* Who to follow section */}
+        <h3>Who to follow</h3>
+        <ul>
+          {users?.map((person) => (
+            <li key={person._id} className="suggestion-item">
               <img
-                src={visualMedia[0]?.url || HuminerPostSample}
-                alt={post.title}
+                src={person.profilePicture || "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"}
+                alt={person.username}
               />
-              <div className="content-info">
-                {/* <p className="content-title">{post.title}</p> */}
-                <Link className="feed-title" to={`/post/${post?._id}`}><h2>{post?.title}</h2></Link>
-                <span className="content-author">{post.author}</span>
+              <div>
+                <Link to={`/profile/${person.username}`} onClick={closeMobile}>
+                  <p className="suggestion-name">{person.username}</p>
+                  <span className="suggestion-handle">@{person.username}</span>
+                </Link>
               </div>
-            </a>
-          )})}
-        </div>
-      </div>
 
-      <div className="suggestion-footer">
-        <p>© {new Date().getFullYear()} HUMINER</p>
-      </div>
-    </aside>
+              {following[person._id] ? (
+                <button
+                  className="danger-btn"
+                  onClick={() => handleUnfollow(person._id)}
+                >
+                  Unfollow
+                </button>
+              ) : (
+                <button
+                  className="follow-btn"
+                  onClick={() => handleFollow(person._id)}
+                >
+                  Follow
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+
+        {/* Suggested Content section */}
+        <div className="suggested-content">
+          <h3>Suggested content</h3>
+          <div className="content-grid">
+            {posts?.map((post, index) => {
+              const visualMedia = post.media?.filter(m => m.type === "image") || [];
+              return (
+                <a href={post.link} key={index} className="content-card" onClick={closeMobile}>
+                  <img
+                    src={visualMedia[0]?.url || HuminerPostSample}
+                    alt={post.title}
+                  />
+                  <div className="content-info">
+                    {/* <p className="content-title">{post.title}</p> */}
+                    <Link className="feed-title" to={`/post/${post?._id}`}><h2>{post?.title}</h2></Link>
+                    <span className="content-author">{post.author}</span>
+                  </div>
+                </a>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className="suggestion-footer">
+          <p>© {new Date().getFullYear()} HUMINER</p>
+        </div>
+      </aside>
+    </>
   );
 }

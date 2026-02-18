@@ -1,75 +1,75 @@
 .signup-page {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    /* background: linear-gradient(135deg, gold, royalblue); */
-    padding: 20px;
-  }
-  
-  .signup-box {
-    background: white;
-    color: #555;
-    padding: 30px 40px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    width: 100%;
-    max-width: 450px;
-    text-align: center;
-  }
-  
-  .signup-box h1 {
-    margin-bottom: 5px;
-    font-size: 2rem;
-    color: royalblue;
-  }
-  
-  .signup-subtitle {
-    font-size: 0.9rem;
-    color: #555;
-    margin-bottom: 20px;
-  }
-  
-  .signup-box form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .signup-box input {
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-  }
-  
-  .signup-box button {
-    background-color: royalblue;
-    color: white;
-    border: none;
-    padding: 12px;
-    font-size: 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  
-  .signup-box button:hover {
-    background-color: darkblue;
-  }
-  
-  .signup-links {
-    margin-top: 15px;
-    font-size: 0.85rem;
-  }
-  
-  .signup-links a {
-    color: royalblue;
-    margin-left: 5px;
-    text-decoration: none;
-  }
-  
-  .signup-links a:hover {
-    text-decoration: underline;
-  }
-  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  height: auto;
+  /* background: linear-gradient(135deg, gold, royalblue); */
+  padding: 20px;
+}
+
+.signup-box {
+  background: white;
+  color: #555;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+}
+
+.signup-box h1 {
+  margin-bottom: 5px;
+  font-size: 2rem;
+  color: royalblue;
+}
+
+.signup-subtitle {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.signup-box form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.signup-box input {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.signup-box button {
+  background-color: royalblue;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.signup-box button:hover {
+  background-color: darkblue;
+}
+
+.signup-links {
+  margin-top: 15px;
+  font-size: 0.85rem;
+}
+
+.signup-links a {
+  color: royalblue;
+  margin-left: 5px;
+  text-decoration: none;
+}
+
+.signup-links a:hover {
+  text-decoration: underline;
+}

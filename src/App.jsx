@@ -25,6 +25,8 @@ import { socket } from "./helpers/sockets";
 // import getU
 import "./App.css";
 
+import BottomNav from "./components/nav/BottomNav";
+
 function App() {
   const { pathname } = useLocation();
   const dispatch = useDispatch();
@@ -55,12 +57,21 @@ function App() {
 
   const hideSideBarRoutes = ["/", "/login", "/signup"];
   const hideSuggestionBarRoutes = ["/", "/create", "/login", "/signup"];
+  const hideBottomNavRoutes = ["/login", "/signup"]; // Hide bottom nav on auth pages
+
   const shouldHideSidebar = hideSideBarRoutes.includes(pathname);
   const shouldHideSuggestionbar = hideSuggestionBarRoutes.includes(pathname);
+  const shouldHideBottomNav = hideBottomNavRoutes.includes(pathname);
+
+  // Suggestions Toggle State
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const toggleSuggestions = () => setShowSuggestions(!showSuggestions);
 
   return (
     <div className={shouldHideSidebar ? "" : "app-layout"}>
-      {!shouldHideSidebar && <Sidebar />}
+      {!shouldHideSidebar && (
+        <Sidebar toggleSuggestions={toggleSuggestions} />
+      )}
       <div className={shouldHideSidebar ? "" : "app-content"}>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -80,7 +91,15 @@ function App() {
           <Route path="/chat/:chatId" element={<Chat />} />
         </Routes>
       </div>
-      {!shouldHideSuggestionbar && <Suggestions />}
+      {!shouldHideSuggestionbar && (
+        <Suggestions
+          showMobile={showSuggestions}
+          closeMobile={() => setShowSuggestions(false)}
+        />
+      )}
+      {!shouldHideBottomNav && (
+        <BottomNav toggleSuggestions={toggleSuggestions} />
+      )}
     </div>
   );
 }
