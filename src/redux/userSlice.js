@@ -6,7 +6,9 @@ import {
   updateUserProfile,
   followUser,
   unfollowUser,
-  claimRewards
+  claimRewards,
+  addBankAccount,
+  deleteBankAccount
 } from "../api/userApi";
 
 const initialState = {
@@ -58,7 +60,7 @@ export const fetchUserProfileThunk = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const { data } = await getUserProfile(id);
-      console.log("profthunk",data)
+      console.log("profthunk", data)
       return data; // user data
     } catch (err) {
       console.error("Fetch profile error:", err);
@@ -118,6 +120,32 @@ export const claimRewardsThunk = createAsyncThunk(
       return data; // the backend returns the updated user object
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed to claim rewards");
+    }
+  }
+);
+
+// 🆕 Add Bank Account thunk
+export const addBankAccountThunk = createAsyncThunk(
+  "huminer/addBankAccount",
+  async (bankData, { rejectWithValue }) => {
+    try {
+      const data = await addBankAccount(bankData);
+      return data; // returns { message, bankAccounts }
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Failed to add bank account");
+    }
+  }
+);
+
+// 🆕 Delete Bank Account thunk
+export const deleteBankAccountThunk = createAsyncThunk(
+  "huminer/deleteBankAccount",
+  async (bankId, { rejectWithValue }) => {
+    try {
+      const data = await deleteBankAccount(bankId);
+      return data; // returns { message, bankAccounts }
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Failed to delete bank account");
     }
   }
 );
@@ -200,6 +228,39 @@ const userSlice = createSlice({
         state.activeUser = action.payload; // updated user with new balances
       })
       .addCase(claimRewardsThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Add Bank Account
+      .addCase(addBankAccountThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addBankAccountThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        // Update bank accounts in activeUser
+        if (state.activeUser) {
+          state.activeUser.bankAccounts = action.payload.bankAccounts;
+        }
+      })
+      .addCase(addBankAccountThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Delete Bank Account
+      .addCase(deleteBankAccountThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteBankAccountThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        if (state.activeUser) {
+          state.activeUser.bankAccounts = action.payload.bankAccounts;
+        }
+      })
+      .addCase(deleteBankAccountThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

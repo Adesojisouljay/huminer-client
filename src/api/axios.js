@@ -1,8 +1,7 @@
 import axios from "axios";
 
-// export const API = axios.create({
-//     baseURL: "http://localhost:2111/api", // change this to your deployed URL when live
-//   });
+const BASE_URL = process.env.REACT_APP_HUMINER_API || "http://localhost:2111/api";
+
 export const API = axios.create({
-    baseURL: process.env.REACT_APP_HUMINER_API || "http://localhost:2111/api", // change this to your deployed URL when live
-  });
+  baseURL: BASE_URL,
+});

@@ -37,7 +37,7 @@ export const deletePost = async (postId) => {
 export const tipPost = async (postId, tipData) => {
   try {
     const response = await API.post(`/posts/${postId}/tip`, tipData, getAuthHeaders());
-    
+
     return response.data;
   } catch (error) {
     console.log(error.response.data.message)
@@ -69,12 +69,23 @@ export const tipComment = async (postId, commentId, tipData) => {
 
 // 🆕 Get random posts (for "Suggested posts" or "Discover" sections)
 export const getRandomPosts = async (limit = 5) => {
-    const response = await API.get(`/posts/random/posts?limit=${limit}`);
-    return response.data.posts;
-  };
-  
-  export const getPostByUsername = async (username) => {
+  const response = await API.get(`/posts/random/posts?limit=${limit}`);
+  return response.data.posts;
+};
+
+export const getPostByUsername = async (username) => {
   const res = await API.get(`/posts/post/${username}`);
   return res.data.posts;
 };
-  
+
+// 🆕 Get following posts
+export const getFollowingPosts = async () => {
+  const response = await API.get("/posts/following", getAuthHeaders());
+  return response.data;
+};
+
+// 🆕 Like a post
+export const likePost = async (postId) => {
+  const response = await API.put(`/posts/${postId}/like`, {}, getAuthHeaders());
+  return response.data; // returns { success, message, likes }
+};

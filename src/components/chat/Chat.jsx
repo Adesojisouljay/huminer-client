@@ -1,6 +1,6 @@
 // src/components/chat/Chat.jsx
 import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getAllUsers } from "../../api/userApi";
 import { getOrCreateChat, getChatMessages } from "../../api/chatApi";
@@ -9,8 +9,16 @@ import CallModal from "./CallModal";
 // import useWebRTC from "../../hooks/useWebRTC";
 import useWebRTC from "../../chat-call-hooks/useWebRTC";
 import "./index.css";
+import { MdCall, MdVideocam, MdSearch, MdMoreVert, MdArrowBack, MdSend } from "react-icons/md";
+import { BsCheckAll } from "react-icons/bs";
 
 const SOCKET_URL = process.env.REACT_APP_HUMINER_API1 || "http://localhost:2111";
+
+// Helper for initials
+const getInitials = (username) => {
+  if (!username) return "?";
+  return username.substring(0, 2).toUpperCase();
+};
 
 export default function Chat() {
   const { activeUser } = useSelector((state) => state.huminer);
@@ -22,9 +30,12 @@ export default function Chat() {
   const [search, setSearch] = useState("");
   const [onlineUsers, setOnlineUsers] = useState([]);
 
+  // Use state for socket so hooks update
+  const [socket, setSocket] = useState(null);
+
   const messagesEndRef = useRef(null);
-  const socketRef = useRef(null);
   const chatIdRef = useRef(null);
+  const inputRef = useRef(null);
 
   // WEBRTC hook (needs socket and local id)
   const {
@@ -35,7 +46,7 @@ export default function Chat() {
     remoteStream,
     inCall,
     callType,
-  } = useWebRTC({ socket: socketRef.current, localUserId: activeUser?._id });
+  } = useWebRTC({ socket, localUserId: activeUser?._id });
 
   // incoming call state
   const [incomingCall, setIncomingCall] = useState(null); // { fromUserId, callType, offer }
@@ -49,7 +60,9 @@ export default function Chat() {
         const allUsers = await getAllUsers();
         const filtered = allUsers.filter((u) => u._id !== activeUser._id);
         setUsers(filtered);
-        if (filtered.length) setSelectedUser(filtered[0]);
+        // Do not auto-select user to start with blank slate? Or select first?
+        // Let's keep existing behavior for now or maybe better not to auto-select
+        // if (filtered.length) setSelectedUser(filtered[0]);
       } catch (err) {
         console.error(err);
       }
@@ -58,19 +71,19 @@ export default function Chat() {
     fetchUsers();
   }, [activeUser]);
 
-  // Socket.io connection
+  // Socket.io connection - initialize as state
   useEffect(() => {
     if (!activeUser) return;
 
-    const socket = io(SOCKET_URL, { transports: ["websocket"] });
-    socketRef.current = socket;
+    const newSocket = io(SOCKET_URL, { transports: ["websocket"] });
+    setSocket(newSocket);
 
-    socket.emit("userOnline", activeUser._id);
+    newSocket.emit("userOnline", activeUser._id);
 
-    socket.on("onlineUsers", (list) => setOnlineUsers(list));
+    newSocket.on("onlineUsers", (list) => setOnlineUsers(list));
 
     // incomingCall: server forwards to callee
-    socket.on("incomingCall", async ({ fromUserId, callType, offer }) => {
+    newSocket.on("incomingCall", async ({ fromUserId, callType, offer }) => {
       // Show incoming call modal and keep offer for accept
       setIncomingCall({ fromUserId, callType, offer });
     });
@@ -78,17 +91,17 @@ export default function Chat() {
     // when caller receives answer from callee, the hook will listen to "callAnswered" itself
     // iceCandidate, callEnded are handled inside useWebRTC too
 
-    socket.on("callEnded", ({ fromUserId }) => {
+    newSocket.on("callEnded", ({ fromUserId }) => {
       // if remote ended, cleanup UI too
       // the hook endCall will also handle cleanup when callEnded arrives
       setIncomingCall(null);
     });
 
-    socket.on("userOffline", ({ toUserId }) => {
+    newSocket.on("userOffline", ({ toUserId }) => {
       // optional: toast user offline
     });
 
-    socket.on("newMessage", ({ chatId, message }) => {
+    newSocket.on("newMessage", ({ chatId, message }) => {
       if (chatId === chatIdRef.current) {
         setMessages((prev) => [
           ...prev,
@@ -105,21 +118,21 @@ export default function Chat() {
     });
 
     return () => {
-      socket.disconnect();
-      socketRef.current = null;
+      newSocket.disconnect();
+      setSocket(null);
     };
   }, [activeUser]);
 
   // Fetch messages & join room (unchanged)
   useEffect(() => {
-    if (!selectedUser || !activeUser || !socketRef.current) return;
+    if (!selectedUser || !activeUser || !socket) return;
 
     const initChat = async () => {
       try {
         const chat = await getOrCreateChat(activeUser._id, selectedUser._id);
         chatIdRef.current = chat._id;
 
-        socketRef.current.emit("joinRoom", chat._id);
+        socket.emit("joinRoom", chat._id);
 
         const msgs = await getChatMessages(chat._id);
         const formatted = msgs.map((msg) => ({
@@ -139,18 +152,19 @@ export default function Chat() {
     };
 
     initChat();
-  }, [selectedUser, activeUser]);
+  }, [selectedUser, activeUser, socket]);
 
   const sendMessage = () => {
-    if (!input.trim() || !selectedUser) return;
+    if (!input.trim() || !selectedUser || !socket) return;
 
-    socketRef.current.emit("sendMessage", {
+    socket.emit("sendMessage", {
       chatId: chatIdRef.current,
       senderId: activeUser._id,
       text: input,
     });
 
     setInput("");
+    inputRef.current?.focus();
   };
 
   useEffect(() => {
@@ -160,10 +174,10 @@ export default function Chat() {
   const isOnline = (userId) => onlineUsers.includes(userId);
 
   // CALL UI handlers
-  const onStartAudioCall = async (targetUser) => {
-    if (!socketRef.current) return;
+  const onStartAudioCall = async () => {
+    if (!socket || !selectedUser) return;
     try {
-      const { _id: toUserId } = targetUser;
+      const { _id: toUserId } = selectedUser;
       // startCall will create offer and emit "callUser"
       await startCall({ toUserId, isVideo: false });
     } catch (err) {
@@ -171,10 +185,10 @@ export default function Chat() {
     }
   };
 
-  const onStartVideoCall = async (targetUser) => {
-    if (!socketRef.current) return;
+  const onStartVideoCall = async () => {
+    if (!socket || !selectedUser) return;
     try {
-      const { _id: toUserId } = targetUser;
+      const { _id: toUserId } = selectedUser;
       await startCall({ toUserId, isVideo: true });
     } catch (err) {
       console.error("start video call error", err);
@@ -182,7 +196,7 @@ export default function Chat() {
   };
 
   const onAcceptIncoming = async () => {
-    if (!incomingCall || !socketRef.current) return;
+    if (!incomingCall || !socket) return;
     try {
       const { fromUserId, offer, callType } = incomingCall;
       // acceptCall will set remote desc, create answer and emit "answerCall"
@@ -195,8 +209,8 @@ export default function Chat() {
 
   const onRejectIncoming = () => {
     // send endCall to caller
-    if (socketRef.current && incomingCall) {
-      socketRef.current.emit("endCall", { toUserId: incomingCall.fromUserId, fromUserId: activeUser._id });
+    if (socket && incomingCall) {
+      socket.emit("endCall", { toUserId: incomingCall.fromUserId, fromUserId: activeUser._id });
     }
     setIncomingCall(null);
   };
@@ -231,14 +245,28 @@ export default function Chat() {
     <div className={`chat-container ${showChatOnMobile ? "mobile-show-chat" : "mobile-show-list"}`}>
       {/* SIDEBAR */}
       <div className={`chat-sidebar ${showChatOnMobile ? "hidden-mobile" : ""}`}>
-        <h2 className="sidebar-title">Chats</h2>
-        <input
-          type="text"
-          className="chat-search"
-          placeholder="Search username..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <div className="sidebar-header">
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <div className="avatar-circle" style={{ width: 40, height: 40, fontSize: 16, marginRight: 0 }}>
+              {getInitials(activeUser?.username)}
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 15 }}>
+            {/* Icons for User Profile / Status / New Chat could go here */}
+            <MdMoreVert className="header-icon" />
+          </div>
+        </div>
+
+        <div className="search-container">
+          <input
+            type="text"
+            className="chat-search"
+            placeholder="Search or start new chat"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
         <div className="chat-list">
           {users
             .filter((u) => u.username.toLowerCase().includes(search.toLowerCase()))
@@ -248,10 +276,17 @@ export default function Chat() {
                 className={`chat-list-item ${selectedUser?._id === user._id ? "active" : ""}`}
                 onClick={() => handleUserSelect(user)}
               >
-                <span className={`status-dot ${isOnline(user._id) ? "online" : "offline"}`}></span>
-                <div style={{ flex: 1 }}>
-                  <div className="chat-list-name">{user.username}</div>
-                  <div className="chat-list-last">{isOnline(user._id) ? "Online" : "Offline"}</div>
+                <div className="avatar-circle">
+                  {getInitials(user.username)}
+                  {isOnline(user._id) && <span className="status-dot"></span>}
+                </div>
+
+                <div className="chat-info">
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span className="chat-list-name">{user.username}</span>
+                    <span className="chat-list-last">Today</span>
+                  </div>
+                  <div className="chat-list-last">Click to start chatting</div>
                 </div>
               </div>
             ))}
@@ -261,46 +296,92 @@ export default function Chat() {
       {/* MAIN CHAT */}
       <div className={`chat-main ${!showChatOnMobile ? "hidden-mobile" : ""}`}>
         {/* HEADER */}
-        {selectedUser && (
+        {selectedUser ? (
           <div className="chat-header">
-            <button
-              className="back-button-mobile"
-              onClick={() => setShowChatOnMobile(false)}
-            >
-              ←
-            </button>
-            <div className="chat-header-left">
-              <span className="chat-username">{selectedUser.username}</span>
-              <span className={`user-status ${isOnline(selectedUser._id) ? "online-text" : "offline-text"}`}>
-                {isOnline(selectedUser._id) ? "Online" : "Offline"}
-              </span>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <button
+                className="back-button-mobile"
+                onClick={() => setShowChatOnMobile(false)}
+              >
+                <MdArrowBack />
+              </button>
+
+              <div className="chat-header-user">
+                <div className="avatar-circle" style={{ width: 40, height: 40, fontSize: 16 }}>
+                  {getInitials(selectedUser.username)}
+                </div>
+                <div>
+                  <span className="chat-username">{selectedUser.username}</span>
+                  <span className="user-status">
+                    {isOnline(selectedUser._id) ? "Online" : "Last seen recently"}
+                  </span>
+                </div>
+              </div>
             </div>
+
+            <div className="chat-header-actions">
+              <MdSearch className="header-icon" />
+              <MdVideocam className="header-icon" onClick={onStartVideoCall} title="Video Call" />
+              <MdCall className="header-icon" onClick={onStartAudioCall} title="Voice Call" />
+              <MdMoreVert className="header-icon" />
+            </div>
+          </div>
+        ) : (
+          <div className="chat-header" style={{ justifyContent: "center", color: "var(--text-secondary)" }}>
+            Select a chat to start messaging
           </div>
         )}
 
         {/* MESSAGES */}
-        <div className="messages-area">
-          {messages.map((msg) => (
-            <div key={msg._id || msg.id} className={`message-row ${msg.fromMe ? "me" : "them"}`}>
-              <div className="message">{msg.text}</div>
-              <div className="message-time">{msg.time}</div>
+        <div className="messages-area"
+          style={{ backgroundImage: !selectedUser ? "none" : undefined }}
+        >
+          {selectedUser ? (
+            messages.map((msg, index) => (
+              <div key={msg._id || index} className={`message-row ${msg.fromMe ? "me" : "them"}`}>
+                <div className="message">
+                  {msg.text}
+                  <span className="message-time">
+                    {msg.time}
+                    {msg.fromMe && <BsCheckAll style={{ marginLeft: 4, color: "#4fb6ec" }} />}
+                  </span>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+              color: "var(--text-secondary)",
+              flexDirection: "column"
+            }}>
+              <div style={{ fontSize: 60, marginBottom: 20 }}>👋</div>
+              <h3>Welcome to Huminer Chat</h3>
+              <p>Send and receive messages with end-to-end functionality</p>
             </div>
-          ))}
+          )}
           <div ref={messagesEndRef}></div>
         </div>
 
         {/* COMPOSER */}
-        <div className="message-composer">
-          <input
-            type="text"
-            className="composer-input"
-            placeholder="Type a message"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          />
-          <button className="send-button" onClick={sendMessage}>Send</button>
-        </div>
+        {selectedUser && (
+          <div className="message-composer">
+            <input
+              ref={inputRef}
+              type="text"
+              className="composer-input"
+              placeholder="Type a message"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+            />
+            <button className={`send-button ${input.trim() ? "active" : ""}`} onClick={sendMessage}>
+              <MdSend />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* CALL MODAL for incoming or active calls */}
@@ -323,21 +404,51 @@ export default function Chat() {
       {/* small accept/reject buttons for incoming calls */}
       {incomingCall && (
         <div style={{
-          //   position: "fixed",
-          left: 200,
+          position: "fixed",
+          left: "50%",
           bottom: 20,
+          transform: "translateX(-50%)",
           zIndex: 10000,
-          background: "var(--card-bg)",
-          padding: 12,
-          borderRadius: 8,
-          border: "1px solid var(--border-color)"
+          background: "#202c33",
+          padding: "16px 24px",
+          borderRadius: 12,
+          border: "1px solid rgba(255,255,255,0.1)",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.5)",
+          color: "white",
+          minWidth: 300
         }}>
-          <div style={{ marginBottom: 8 }}>
-            Incoming {incomingCall.callType} call from {users.find(u => u._id === incomingCall.fromUserId)?.username || "User"}
+          <div style={{ marginBottom: 16, textAlign: "center", fontSize: 16 }}>
+            Run-time Incoming <b>{incomingCall.callType}</b> call...
           </div>
-          <div style={{ display: "flex", gap: 8 }}>
-            <button onClick={onAcceptIncoming}>Accept</button>
-            <button onClick={onRejectIncoming}>Reject</button>
+          <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
+            <button
+              onClick={onAcceptIncoming}
+              style={{
+                background: "#00a884",
+                border: "none",
+                padding: "10px 24px",
+                borderRadius: 24,
+                color: "white",
+                cursor: "pointer",
+                fontWeight: "bold"
+              }}
+            >
+              Accept
+            </button>
+            <button
+              onClick={onRejectIncoming}
+              style={{
+                background: "#ef5350",
+                border: "none",
+                padding: "10px 24px",
+                borderRadius: 24,
+                color: "white",
+                cursor: "pointer",
+                fontWeight: "bold"
+              }}
+            >
+              Reject
+            </button>
           </div>
         </div>
       )}

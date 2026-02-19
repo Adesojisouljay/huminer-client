@@ -50,7 +50,7 @@ export const getRandomUsers = async (limit = 5) => {
 
 // 🆕 Follow a user
 export const followUser = async (userId) => {
-  
+
   const response = await API.put(
     `/users/follow/${userId}`,
     {}, // no body
@@ -76,4 +76,14 @@ export const claimRewards = async () => {
   const response = await API.post("/users/claim-rewards", {}, getAuthHeaders());
   console.log("respnse claim...", response)
   return response.data.user; // Returns the updated user object
+};
+// 🆕 Add Bank Account
+export const addBankAccount = async (bankData) => {
+  const response = await API.post("/users/add-bank", bankData, getAuthHeaders());
+  return response.data; // returns message and updated bankAccounts
+};
+// 🆕 Delete Bank Account
+export const deleteBankAccount = async (bankId) => {
+  const response = await API.delete(`/users/delete-bank/${bankId}`, getAuthHeaders());
+  return response.data; // returns message and updated bankAccounts
 };

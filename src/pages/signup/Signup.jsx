@@ -38,58 +38,71 @@ export default function SignupPage() {
 
   return (
     <div className="signup-page">
-      <div className="signup-box">
-        <h1>🎵 SOULJAY</h1>
-        <p className="signup-subtitle">
-          Join the community where everyone is a celebrity
-        </p>
+      <div className="auth-container">
+        {/* Left Side: Hero Section */}
+        <div className="auth-left">
+          <div className="auth-hero-content">
+            <h1>You are the <span className="highlight-text">resource</span>. Start <span className="highlight-text">mining</span> today.</h1>
+            <p>Huminer: Discover the wealth within your creativity.</p>
+          </div>
+        </div>
 
-        <form onSubmit={handleSignup}>
-          <input
-            type="text"
-            placeholder="Full name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-          />
+        {/* Right Side: Signup Form */}
+        <div className="auth-right">
+          <div className="signup-box">
+            <h1 className="mobile-logo">HUMINER</h1>
+            <p className="signup-subtitle">
+              Join the revolution of human mining
+            </p>
 
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
+            <form onSubmit={handleSignup}>
+              <input
+                type="text"
+                placeholder="Full name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
 
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+              <input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+              <input
+                type="email"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
 
-          <input
-            type="password"
-            placeholder="Confirm password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Creating account..." : "Sign Up"}
-          </button>
-        </form>
+              <input
+                type="password"
+                placeholder="Confirm password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
 
-        {error && <p className="error-message">{error}</p>}
+              <button type="submit" disabled={loading}>
+                {loading ? "Creating account..." : "Sign Up"}
+              </button>
+            </form>
 
-        <div className="signup-links">
-          <span>Already have an account?</span>
-          <a href="/login">Login</a>
+            {error && <p className="error-message">{error}</p>}
+
+            <div className="signup-links">
+              <span>Already have an account?</span>
+              <a href="/login">Login</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>

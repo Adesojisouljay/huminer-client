@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { claimRewardsThunk } from "../../redux/userSlice";
+import { claimRewardsThunk, addBankAccountThunk, deleteBankAccountThunk } from "../../redux/userSlice";
 import "./index.css";
 
 export default function WalletPage() {
@@ -10,10 +10,11 @@ export default function WalletPage() {
 
   console.log("activeUser...", activeUser)
 
-  const [balance, setBalance] = useState(2500);
-  const [bankAccounts, setBankAccounts] = useState([
-    { id: 1, bankName: "GTBank", accountNumber: "0123456789", accountName: "Soji Music" }
-  ]);
+  const [balance, setBalance] = useState(activeUser?.accountBalance || 0);
+
+  // Use real bank accounts from Redux
+  const bankAccounts = activeUser?.bankAccounts || [];
+
   const [transactions, setTransactions] = useState([
     { id: 1, type: "Top Up", amount: 5000, date: "2025-08-10" },
     { id: 2, type: "Tip Received", amount: 1500, date: "2025-08-09" },
@@ -22,14 +23,28 @@ export default function WalletPage() {
 
   const [showModal, setShowModal] = useState(null); // 'topup', 'withdraw', 'bank' or null
   const [formData, setFormData] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  const handleModalSubmit = () => {
+  const handleDeleteBank = async (bankId) => {
+    if (window.confirm("Are you sure you want to delete this bank account?")) {
+      try {
+        await dispatch(deleteBankAccountThunk(bankId)).unwrap();
+        alert("Bank account deleted.");
+      } catch (error) {
+        alert(error || "Failed to delete account");
+      }
+    }
+  };
+
+  const handleModalSubmit = async () => {
     if (showModal === "topup") {
+      // Mock topup for now
       setBalance(prev => prev + Number(formData.amount || 0));
       setTransactions(prev => [
         { id: Date.now(), type: "Top Up", amount: Number(formData.amount), date: new Date().toISOString().split("T")[0] },
         ...prev
       ]);
+      setShowModal(null);
     }
     if (showModal === "withdraw") {
       setBalance(prev => prev - Number(formData.amount || 0));
@@ -37,16 +52,27 @@ export default function WalletPage() {
         { id: Date.now(), type: "Withdrawal", amount: Number(formData.amount), date: new Date().toISOString().split("T")[0] },
         ...prev
       ]);
+      setShowModal(null);
     }
     if (showModal === "bank") {
-      setBankAccounts(prev => [
-        ...prev,
-        { id: Date.now(), bankName: formData.bankName, accountNumber: formData.accountNumber, accountName: formData.accountName }
-      ]);
-    }
+      setLoading(true);
+      try {
+        await dispatch(addBankAccountThunk({
+          bankName: formData.bankName,
+          accountNumber: formData.accountNumber,
+          accountName: formData.accountName
+        })).unwrap();
 
-    setFormData({});
-    setShowModal(null);
+        // Success
+        setFormData({});
+        setShowModal(null);
+        alert("Bank account added successfully!");
+      } catch (error) {
+        alert(error || "Failed to add bank account");
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   const handleClaimRewards = async () => {
@@ -80,8 +106,17 @@ export default function WalletPage() {
         ) : (
           <ul>
             {bankAccounts.map((acc) => (
-              <li key={acc.id}>
-                <strong>{acc.bankName}</strong> — {acc.accountNumber} ({acc.accountName})
+              <li key={acc._id} className="bank-item">
+                <div>
+                  <strong>{acc.bankName}</strong> — {acc.accountNumber} ({acc.accountName})
+                </div>
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDeleteBank(acc._id)}
+                  aria-label="Delete bank account"
+                >
+                  🗑️
+                </button>
               </li>
             ))}
           </ul>
@@ -158,7 +193,9 @@ export default function WalletPage() {
             )}
 
             <div className="modal-actions">
-              <button onClick={handleModalSubmit}>Submit</button>
+              <button onClick={handleModalSubmit} disabled={loading}>
+                {loading ? "Processing..." : "Submit"}
+              </button>
               <button className="cancel" onClick={() => setShowModal(null)}>Cancel</button>
             </div>
           </div>

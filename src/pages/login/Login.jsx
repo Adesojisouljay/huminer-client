@@ -7,10 +7,10 @@ import "./index.css";
 export default function LoginPage() {
   const [emailOrUsername, setemailOrUsername] = useState("");
   const [password, setPassword] = useState("");
-  
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const { loading, error, isAuthenticated, activeUser } = useSelector(
     (state) => state.huminer
   );
@@ -22,7 +22,7 @@ export default function LoginPage() {
       alert("Please fill in all fields.");
       return;
     }
-console.log("object")
+    console.log("object")
     // Dispatch the login thunk
     dispatch(loginUserThunk({ emailOrUsername, password }));
   };
@@ -37,35 +37,48 @@ console.log("object")
 
   return (
     <div className="login-page">
-      <div className="login-box">
-        <h1>🎵 SOULJAY</h1>
-        <p className="login-subtitle">Log in to connect with fans and artists</p>
+      <div className="auth-container">
+        {/* Left Side: Hero Section */}
+        <div className="auth-left">
+          <div className="auth-hero-content">
+            <h1>Mine your <span className="highlight-text">creativity</span>. Unearth your <span className="highlight-text">worth</span>.</h1>
+            <p>Welcome to Huminer. Where everyone is a celebrity and every interaction is valuable.</p>
+          </div>
+        </div>
 
-        <form onSubmit={handleLogin}>
-          <input
-            type="text"
-            placeholder="Email address"
-            value={emailOrUsername}
-            onChange={(e) => setemailOrUsername(e.target.value)}
-          />
+        {/* Right Side: Login Form */}
+        <div className="auth-right">
+          <div className="login-box">
+            <h1 className="mobile-logo">HUMINER</h1>
+            <p className="login-subtitle">Log in to start mining your potential</p>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+            <form onSubmit={handleLogin}>
+              <input
+                type="text"
+                placeholder="Email address"
+                value={emailOrUsername}
+                onChange={(e) => setemailOrUsername(e.target.value)}
+              />
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
 
-        {error && <p className="error-message">{error}</p>}
+              <button type="submit" disabled={loading}>
+                {loading ? "Logging in..." : "Login"}
+              </button>
+            </form>
 
-        <div className="login-links">
-          <a href="/signup">Create an account</a>
-          <a href="/forgot-password">Forgot password?</a>
+            {error && <p className="error-message">{error}</p>}
+
+            <div className="login-links">
+              <a href="/signup">Create an account</a>
+              <a href="/forgot-password">Forgot password?</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>

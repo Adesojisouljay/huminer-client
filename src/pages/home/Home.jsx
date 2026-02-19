@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import HuminerLogo from "../../components/HuminerLogo"; // Import Logo
 import "./index.css";
 
 export default function LandingPage() {
@@ -19,10 +20,15 @@ export default function LandingPage() {
     <div className="landing">
       <header className="header">
         <div className="container header-inner">
-          <Link to="/" className="brand" aria-label="MyMusic home">MyMusic</Link>
+          <Link to="/" className="brand" aria-label="Huminer home">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <HuminerLogo width={40} height={40} />
+              <span>HUMINER</span>
+            </div>
+          </Link>
           <nav className="nav" aria-label="Primary">
             <Link to="/login" className="nav-link">Log in</Link>
-            <Link to="/signup" className="nav-cta" role="button">Sign up</Link>
+            <Link to="/signup" className="nav-cta" role="button">Start Mining</Link>
           </nav>
         </div>
       </header>
@@ -32,21 +38,45 @@ export default function LandingPage() {
         <section className="hero" aria-labelledby="hero-title">
           <div className="container hero-inner">
             <div className="hero-copy">
-              <h1 id="hero-title">Share your music. Engage your fans. Get tipped.</h1>
+              <h1 id="hero-title">Mine Your <span className="highlight">Potential</span>. Unearth Your <span className="highlight">Worth</span>.</h1>
               <p className="hero-sub">
-                Join a vibrant community where artists and fans connect directly through music and tips.
+                Join the social economy where creativity is the new gold. Everyone is a celebrity, and every interaction has real value.
               </p>
               <div className="hero-actions">
-                <Link to="/signup" className="btn btn-primary" role="button" aria-label="Join now">Join Now</Link>
+                <Link to="/signup" className="btn btn-primary" role="button" aria-label="Start mining">Start Mining</Link>
                 <Link to="/features" className="btn btn-outline" aria-label="Learn more">Learn more</Link>
               </div>
             </div>
             <div
               className="hero-media"
               role="img"
-              aria-label="Music community illustration"
+              aria-label="Huminer community illustration"
             >
-              {/* Replace with optimized <img srcSet> or an embedded player */}
+              {/* Abstract visual representing mining/connection */}
+              <div className="hero-visual-pattern"></div>
+            </div>
+          </div>
+        </section>
+
+        {/* Community Section (New) */}
+        <section className="community-section">
+          <div className="container community-inner">
+            <div className="community-image-wrapper">
+              <img
+                src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1000&auto=format&fit=crop"
+                alt="Huminer Community"
+                className="community-image"
+              />
+              <div className="floating-card card-1">
+                <span>💎</span> @SoulJay tipped 500
+              </div>
+            </div>
+            <div className="community-text">
+              <h2>Find Your <span className="highlight-text">Tribe</span>.</h2>
+              <p>
+                Connect with people who value your creativity. Huminer isn't just an app; it's a movement where your interactions create real wealth.
+              </p>
+              <Link to="/signup" className="btn btn-primary">Start Connecting</Link>
             </div>
           </div>
         </section>
@@ -54,30 +84,30 @@ export default function LandingPage() {
         {/* Features */}
         <section className="features" aria-labelledby="features-title">
           <div className="container">
-            <h2 id="features-title" className="section-title">Built for artists and fans</h2>
+            <h2 id="features-title" className="section-title">The Human Mining Ecosystem</h2>
             <div className="features-grid">
               <article className="feature-card" aria-labelledby="f1">
-                <div className="feature-emoji">💰</div>
-                <h3 id="f1">Tip Artists</h3>
-                <p>Support your favorite artists instantly in Naira.</p>
+                <div className="feature-emoji">💎</div>
+                <h3 id="f1">Reward Value</h3>
+                <p>Support creators instantly. Your appreciation has real financial value.</p>
               </article>
 
               <article className="feature-card" aria-labelledby="f2">
-                <div className="feature-emoji">🎯</div>
-                <h3 id="f2">Join Challenges</h3>
-                <p>Participate in music challenges and win rewards.</p>
+                <div className="feature-emoji">🚀</div>
+                <h3 id="f2">Showcase Talent</h3>
+                <p>Participate in challenges. Prove your worth and earn rewards.</p>
               </article>
 
               <article className="feature-card" aria-labelledby="f3">
-                <div className="feature-emoji">🤝</div>
-                <h3 id="f3">Connect</h3>
-                <p>Follow artists and fans to grow your network.</p>
+                <div className="feature-emoji">🔗</div>
+                <h3 id="f3">Build Networks</h3>
+                <p>Connect with fellow miners. Grow your influence and net worth.</p>
               </article>
 
               <article className="feature-card" aria-labelledby="f4">
-                <div className="feature-emoji">🎶</div>
-                <h3 id="f4">Share Music</h3>
-                <p>Upload songs and share them instantly with the world.</p>
+                <div className="feature-emoji">🎨</div>
+                <h3 id="f4">Share Resources</h3>
+                <p>Upload your creativity. Music, art, ideas—it's all a mineable resource.</p>
               </article>
             </div>
           </div>
@@ -86,27 +116,27 @@ export default function LandingPage() {
         {/* How it works */}
         <section className="how-it-works" aria-labelledby="how-title">
           <div className="container">
-            <h2 id="how-title" className="section-title">How it works</h2>
+            <h2 id="how-title" className="section-title">How to Mine</h2>
             <div className="steps-grid">
               <div className="step">
                 <span className="step-num">1</span>
-                <h3>Join the Platform</h3>
-                <p>Create your free account in seconds.</p>
+                <h3>Claim Your Space</h3>
+                <p>Create your Huminer account and set up your profile.</p>
               </div>
               <div className="step">
                 <span className="step-num">2</span>
-                <h3>Upload Your Music</h3>
-                <p>Share your songs with fans instantly.</p>
+                <h3>Share Content</h3>
+                <p>Upload your creative assets and share them with the world.</p>
               </div>
               <div className="step">
                 <span className="step-num">3</span>
-                <h3>Engage Your Audience</h3>
-                <p>Follow, like, and tip others to grow your reach.</p>
+                <h3>Engage & Mine</h3>
+                <p>Interact with others. Every like, comment, and share builds value.</p>
               </div>
               <div className="step">
                 <span className="step-num">4</span>
-                <h3>Earn Tips</h3>
-                <p>Get rewarded directly from your fans.</p>
+                <h3>Earn Rewards</h3>
+                <p>Get tipped directly for your contributions and creativity.</p>
               </div>
             </div>
           </div>
@@ -115,17 +145,17 @@ export default function LandingPage() {
         {/* Challenges preview */}
         <section className="challenges" aria-labelledby="challenges-title">
           <div className="container">
-            <h2 id="challenges-title" className="section-title">Upcoming Challenges</h2>
+            <h2 id="challenges-title" className="section-title">Active Excavations (Challenges)</h2>
             <div className="challenge-grid">
               <div className="challenge-card">
                 <h3>Best Freestyle Contest</h3>
-                <p>Show your freestyle skills and win ₦10,000.</p>
-                <Link to="/signup" className="btn btn-primary" role="button">Join now</Link>
+                <p>Show your flow and mine the grand prize of ₦10,000.</p>
+                <Link to="/signup" className="btn btn-primary" role="button">Join Excavation</Link>
               </div>
               <div className="challenge-card">
-                <h3>Cover Song Challenge</h3>
-                <p>Perform your favorite hit and earn fan tips.</p>
-                <Link to="/signup" className="btn btn-primary" role="button">Join now</Link>
+                <h3>Creative Cover Challenge</h3>
+                <p>Remix a hit and earn tips from the community.</p>
+                <Link to="/signup" className="btn btn-primary" role="button">Join Excavation</Link>
               </div>
             </div>
           </div>
@@ -134,14 +164,14 @@ export default function LandingPage() {
         {/* Testimonials */}
         <section className="testimonials" aria-labelledby="testi-title">
           <div className="container">
-            <h2 id="testi-title" className="section-title">What our community says</h2>
+            <h2 id="testi-title" className="section-title">Voices from the Mine</h2>
             <div className="testimonial-grid">
               <blockquote>
-                “I earned my first ₦5,000 from fans in just one week!”
+                “Huminer turned my creativity into a career. I'm mining value every day!”
                 <cite>— DJ Gabson</cite>
               </blockquote>
               <blockquote>
-                “This platform connects me directly with my audience.”
+                “Finally, a platform where my interactions actually mean something.”
                 <cite>— Dj Hophuray</cite>
               </blockquote>
             </div>
@@ -151,15 +181,15 @@ export default function LandingPage() {
         {/* CTA */}
         <section className="cta-banner" aria-labelledby="cta-title">
           <div className="container">
-            <h2 id="cta-title">Start sharing your music today</h2>
-            <Link to="/signup" className="btn btn-cta" role="button" aria-label="Get started">Get started</Link>
+            <h2 id="cta-title">Start mining your potential today</h2>
+            <Link to="/signup" className="btn btn-cta" role="button" aria-label="Get started">Get Started</Link>
           </div>
         </section>
       </main>
 
       <footer className="footer" role="contentinfo">
         <div className="container footer-inner">
-          <p>© {new Date().getFullYear()} MyMusic. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Huminer. All rights reserved.</p>
         </div>
       </footer>
     </div>
