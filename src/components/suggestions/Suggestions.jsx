@@ -29,13 +29,17 @@ export default function Suggestions({ showMobile, closeMobile }) {
     const fetchSuggestions = async () => {
       try {
         const randomUsers = await getRandomUsers(5);
-        setUsers(randomUsers);
+        // Filter out current user
+        const filtered = randomUsers.filter((u) => u._id !== activeUser?._id);
+        setUsers(filtered);
       } catch (error) {
         console.error("Failed to fetch suggestions:", error);
       }
     };
-    fetchSuggestions();
-  }, []);
+    if (activeUser) {
+      fetchSuggestions();
+    }
+  }, [activeUser]);
 
   // Fetch random posts
   useEffect(() => {

@@ -81,20 +81,22 @@ export default function FollowListModal({ title, users, closeModal }) {
                     <span>{u.username}</span>
                   </div>
 
-                  <button
-                    className={isFollowing ? "following-btn" : "follow-btn"}
-                    onClick={() =>
-                      isFollowing ? handleUnfollow(u._id) : handleFollow(u._id)
-                    }
-                    onMouseEnter={() => isFollowing && setHoveredUser(u._id)}
-                    onMouseLeave={() => setHoveredUser(null)}
-                  >
-                    {isFollowing
-                      ? hoveredUser === u._id
-                        ? "Unfollow"
-                        : "Following"
-                      : "Follow back"}
-                  </button>
+                  {u._id !== activeUser?._id && (
+                    <button
+                      className={isFollowing ? "following-btn" : "follow-btn"}
+                      onClick={() =>
+                        isFollowing ? handleUnfollow(u._id) : handleFollow(u._id)
+                      }
+                      onMouseEnter={() => isFollowing && setHoveredUser(u._id)}
+                      onMouseLeave={() => setHoveredUser(null)}
+                    >
+                      {isFollowing
+                        ? hoveredUser === u._id
+                          ? "Unfollow"
+                          : "Following"
+                        : "Follow"}
+                    </button>
+                  )}
                 </div>
               );
             })}
