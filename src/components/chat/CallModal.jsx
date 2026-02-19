@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { MdCallEnd, MdMic, MdMicOff, MdVideocam, MdVideocamOff, MdCameraswitch } from "react-icons/md";
 import "./call.css";
 
 export default function CallModal({
@@ -18,13 +19,31 @@ export default function CallModal({
 
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [videoEnabled, setVideoEnabled] = useState(callType === "video");
+  const [elapsed, setElapsed] = useState(0);
+
+  // Timer
+  useEffect(() => {
+    if (!visible) {
+      setElapsed(0);
+      return;
+    }
+    const interval = setInterval(() => setElapsed((prev) => prev + 1), 1000);
+    return () => clearInterval(interval);
+  }, [visible]);
+
+  // Format time
+  const formatTime = (sec) => {
+    const m = Math.floor(sec / 60).toString().padStart(2, "0");
+    const s = (sec % 60).toString().padStart(2, "0");
+    return `${m}:${s}`;
+  };
 
   // Attach local stream
   useEffect(() => {
     if (localVideoRef.current && localStream) {
       localVideoRef.current.srcObject = localStream;
     }
-  }, [localStream]);
+  }, [localStream, visible]);
 
   // Attach remote stream
   useEffect(() => {
@@ -40,24 +59,26 @@ export default function CallModal({
         .then(() => console.log("Audio playing"))
         .catch((err) => console.warn("Autoplay blocked?", err));
     }
-  }, [remoteStream, callType]);
+  }, [remoteStream, callType, visible]);
 
   if (!visible) return null;
 
   return (
     <div className="call-modal-overlay">
       <div className="call-modal">
-        <div className="call-top">
-          <div className="call-user">
-            {callerName || (isCaller ? "Calling..." : "Incoming Call")}
+        {/* Header Overlay */}
+        <div className="call-header">
+          <div className="call-info">
+            <div className="caller-name">{callerName || (isCaller ? "Calling..." : "Incoming Call")}</div>
+            <div className="call-status">
+              {isCaller && elapsed === 0 ? "Ring..." : <span className="call-timer">{formatTime(elapsed)}</span>}
+              • {callType === "video" ? "Video Call" : "Voice Call"}
+            </div>
           </div>
-          <button className="hangup-btn" onClick={onHangUp}>
-            End
-          </button>
         </div>
 
         <div className="call-videos">
-          {/* Remote */}
+          {/* Remote Video / Audio Area */}
           <div className="remote-video-wrapper">
             {callType === "video" ? (
               <video
@@ -67,19 +88,19 @@ export default function CallModal({
                 className="remote-video"
               />
             ) : (
-              <div className="remote-audio-wrapper">
-                <audio ref={remoteAudioRef} autoPlay hidden />
-                <div className="initials">
+              <div className="audio-placeholder">
+                <div className="audio-avatar">
                   {callerName?.[0]?.toUpperCase() || "U"}
                 </div>
-                <div>{callerName || "User"}</div>
+                {/* Invisible audio element for stream playback */}
+                <audio ref={remoteAudioRef} autoPlay hidden />
               </div>
             )}
           </div>
 
-          {/* Local */}
-          <div className="local-video-wrapper">
-            {callType === "video" ? (
+          {/* Local Video (Floating) */}
+          {callType === "video" && (
+            <div className="local-video-wrapper">
               <video
                 ref={localVideoRef}
                 autoPlay
@@ -87,40 +108,48 @@ export default function CallModal({
                 playsInline
                 className="local-video"
               />
-            ) : (
-              <div className="local-audio-placeholder">You</div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
-        {/* Call Controls */}
+        {/* Controls */}
         <div className="call-controls">
+          {/* Mute Toggle */}
           <button
-            className="control-btn"
+            className={`control-btn ${!audioEnabled ? "active" : ""}`}
             onClick={() => {
               const next = !audioEnabled;
               setAudioEnabled(next);
               onToggleAudio && onToggleAudio(next);
             }}
+            title={audioEnabled ? "Mute" : "Unmute"}
           >
-            {audioEnabled ? "Mute" : "Unmute"}
+            {audioEnabled ? <MdMic /> : <MdMicOff style={{ color: "#111" }} />}
           </button>
 
+          {/* Video Toggle */}
           {callType === "video" && (
             <button
-              className="control-btn"
+              className={`control-btn ${!videoEnabled ? "active" : ""}`}
               onClick={() => {
                 const next = !videoEnabled;
                 setVideoEnabled(next);
                 onToggleVideo && onToggleVideo(next);
               }}
+              title={videoEnabled ? "Turn Camera Off" : "Turn Camera On"}
             >
-              {videoEnabled ? "Camera Off" : "Camera On"}
+              {videoEnabled ? <MdVideocam /> : <MdVideocamOff style={{ color: "#111" }} />}
             </button>
           )}
 
-          <button className="control-btn hang" onClick={onHangUp}>
-            Hang up
+          {/* Switch Cam (Visual Only for now) */}
+          {/* <button className="control-btn" title="Switch Camera">
+             <MdCameraswitch />
+           </button> */}
+
+          {/* Hang Up */}
+          <button className="control-btn hangup" onClick={onHangUp} title="End Call">
+            <MdCallEnd />
           </button>
         </div>
       </div>

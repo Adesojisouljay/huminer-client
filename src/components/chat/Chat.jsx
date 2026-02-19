@@ -50,6 +50,7 @@ export default function Chat() {
 
   // incoming call state
   const [incomingCall, setIncomingCall] = useState(null); // { fromUserId, callType, offer }
+  const [callPartner, setCallPartner] = useState(null); // name of person we are talking to
 
   // Fetch users
   useEffect(() => {
@@ -188,7 +189,8 @@ export default function Chat() {
   const onStartVideoCall = async () => {
     if (!socket || !selectedUser) return;
     try {
-      const { _id: toUserId } = selectedUser;
+      const { _id: toUserId, username } = selectedUser;
+      setCallPartner(username);
       await startCall({ toUserId, isVideo: true });
     } catch (err) {
       console.error("start video call error", err);
@@ -199,6 +201,9 @@ export default function Chat() {
     if (!incomingCall || !socket) return;
     try {
       const { fromUserId, offer, callType } = incomingCall;
+      const callerName = users.find(u => u._id === fromUserId)?.username || "Caller";
+      setCallPartner(callerName);
+
       // acceptCall will set remote desc, create answer and emit "answerCall"
       await acceptCall({ fromUserId, offer, isVideo: callType === "video" });
       setIncomingCall(null);
@@ -384,21 +389,17 @@ export default function Chat() {
         )}
       </div>
 
-      {/* CALL MODAL for incoming or active calls */}
+      {/* CALL MODAL for active calls only - Incoming shown via popup below */}
       <CallModal
-        visible={!!incomingCall || inCall}
+        visible={inCall}
         localStream={localStream}
         remoteStream={remoteStream}
-        callType={incomingCall ? incomingCall.callType : callType}
+        callType={callType}
         onHangUp={onHangUp}
         onToggleAudio={onToggleAudio}
         onToggleVideo={onToggleVideo}
-        callerName={
-          incomingCall
-            ? users.find((u) => u._id === incomingCall.fromUserId)?.username || "Caller"
-            : selectedUser?.username
-        }
-        isCaller={!incomingCall && inCall}
+        callerName={callPartner || selectedUser?.username || "User"}
+        isCaller={true}
       />
 
       {/* small accept/reject buttons for incoming calls */}
