@@ -44,7 +44,7 @@ function App() {
       socket.emit("userOnline", activeUser._id);
 
       // Optionally, listen for updates about online users
-      socket.on("updateOnlineUsers", (onlineIds) => {
+      socket.on("onlineUsers", (onlineIds) => {
         console.log("Currently online users:", onlineIds);
       });
 

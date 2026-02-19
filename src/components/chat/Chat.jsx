@@ -4,15 +4,13 @@ import React, { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { getAllUsers } from "../../api/userApi";
 import { getOrCreateChat, getChatMessages } from "../../api/chatApi";
-import { io } from "socket.io-client";
+import { socket } from "../../helpers/sockets";
 import CallModal from "./CallModal";
 // import useWebRTC from "../../hooks/useWebRTC";
 import useWebRTC from "../../chat-call-hooks/useWebRTC";
 import "./index.css";
 import { MdCall, MdVideocam, MdSearch, MdMoreVert, MdArrowBack, MdSend } from "react-icons/md";
 import { BsCheckAll } from "react-icons/bs";
-
-const SOCKET_URL = process.env.REACT_APP_HUMINER_API1 || "http://localhost:2111";
 
 // Helper for initials
 const getInitials = (username) => {
@@ -30,8 +28,8 @@ export default function Chat() {
   const [search, setSearch] = useState("");
   const [onlineUsers, setOnlineUsers] = useState([]);
 
-  // Use state for socket so hooks update
-  const [socket, setSocket] = useState(null);
+  // Use imported socket
+  // const [socket, setSocket] = useState(null); // Removed local state
 
   const messagesEndRef = useRef(null);
   const chatIdRef = useRef(null);
@@ -48,7 +46,7 @@ export default function Chat() {
     callType,
   } = useWebRTC({ socket, localUserId: activeUser?._id });
 
-  // incoming call state
+  // incomingCall state
   const [incomingCall, setIncomingCall] = useState(null); // { fromUserId, callType, offer }
   const [callPartner, setCallPartner] = useState(null); // name of person we are talking to
 
@@ -61,9 +59,6 @@ export default function Chat() {
         const allUsers = await getAllUsers();
         const filtered = allUsers.filter((u) => u._id !== activeUser._id);
         setUsers(filtered);
-        // Do not auto-select user to start with blank slate? Or select first?
-        // Let's keep existing behavior for now or maybe better not to auto-select
-        // if (filtered.length) setSelectedUser(filtered[0]);
       } catch (err) {
         console.error(err);
       }
@@ -72,37 +67,40 @@ export default function Chat() {
     fetchUsers();
   }, [activeUser]);
 
-  // Socket.io connection - initialize as state
+  // Socket.io connection - use shared socket
   useEffect(() => {
-    if (!activeUser) return;
+    if (!activeUser || !socket) return;
 
-    const newSocket = io(SOCKET_URL, { transports: ["websocket"] });
-    setSocket(newSocket);
+    // We don't need to connect/emit userOnline here because App.jsx likely handles it
+    // But to be safe in case of refresh on this page, or ensure connection:
+    if (!socket.connected) {
+      socket.connect();
+      socket.emit("userOnline", activeUser._id);
+    }
+    // If already connected, App.jsx likely emitted userOnline. 
+    // But emitting it again updates the map in backend which is fine (idempotent-ish for map set)
+    // Actually, let's just emit to be sure we are in the online map
+    socket.emit("userOnline", activeUser._id);
 
-    newSocket.emit("userOnline", activeUser._id);
+    // Initial fetch of online users
+    socket.emit("getOnlineUsers"); // Backend confirms listener exists
 
-    newSocket.on("onlineUsers", (list) => setOnlineUsers(list));
+    const handleOnlineUsers = (list) => {
+      setOnlineUsers(list);
+    };
 
-    // incomingCall: server forwards to callee
-    newSocket.on("incomingCall", async ({ fromUserId, callType, offer }) => {
-      // Show incoming call modal and keep offer for accept
+    const handleIncomingCall = ({ fromUserId, callType, offer }) => {
+      console.log("Incoming call from", fromUserId);
       setIncomingCall({ fromUserId, callType, offer });
-    });
+    };
 
-    // when caller receives answer from callee, the hook will listen to "callAnswered" itself
-    // iceCandidate, callEnded are handled inside useWebRTC too
-
-    newSocket.on("callEnded", ({ fromUserId }) => {
-      // if remote ended, cleanup UI too
-      // the hook endCall will also handle cleanup when callEnded arrives
+    const handleCallEnded = ({ fromUserId }) => {
       setIncomingCall(null);
-    });
+    };
 
-    newSocket.on("userOffline", ({ toUserId }) => {
-      // optional: toast user offline
-    });
+    // const handleUserOffline = ({ toUserId }) => {};
 
-    newSocket.on("newMessage", ({ chatId, message }) => {
+    const handleNewMessage = ({ chatId, message }) => {
       if (chatId === chatIdRef.current) {
         setMessages((prev) => [
           ...prev,
@@ -116,11 +114,19 @@ export default function Chat() {
           },
         ]);
       }
-    });
+    };
+
+    socket.on("onlineUsers", handleOnlineUsers);
+    socket.on("incomingCall", handleIncomingCall);
+    socket.on("callEnded", handleCallEnded);
+    socket.on("newMessage", handleNewMessage);
 
     return () => {
-      newSocket.disconnect();
-      setSocket(null);
+      // Do NOT disconnect shared socket
+      socket.off("onlineUsers", handleOnlineUsers);
+      socket.off("incomingCall", handleIncomingCall);
+      socket.off("callEnded", handleCallEnded);
+      socket.off("newMessage", handleNewMessage);
     };
   }, [activeUser]);
 
